@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,7 +81,7 @@ const Index = () => {
 
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Fondo Risorse Umane
+            Fondo Risorse Decentrate
           </h1>
           <p className="text-gray-600">
             Calcolo delle risorse disponibili per il personale
@@ -371,3 +372,4 @@ const Index = () => {
 };
 
 export default Index;
+

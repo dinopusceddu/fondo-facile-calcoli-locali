@@ -1,138 +1,69 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 
 const Index = () => {
-  // Input States - Dati Generali
-  const [annoRiferimento, setAnnoRiferimento] = useState<number>(2024);
-  const [monteSalari2018, setMonteSalari2018] = useState<number>(0);
-  const [numeroDipendenti, setNumeroDipendenti] = useState<number>(0);
-  const [mesiDecorrenza, setMesiDecorrenza] = useState<number>(12);
-  const [trattamentoAccessorio2016, setTrattamentoAccessorio2016] = useState<number>(0);
+  // Input States - FONTI DI FINANZIAMENTO STABILI
+  const [fondoConsolidato2017, setFondoConsolidato2017] = useState<number>(0);
+  const [alteProfessionalita, setAlteProfessionalita] = useState<number>(0);
+  const [incremento83_20, setIncremento83_20] = useState<number>(0);
+  const [incrementiStipendiali, setIncrementiStipendiali] = useState<number>(0);
+  const [integrazioneRisorse, setIntegrazioneRisorse] = useState<number>(0);
+  const [risorseRiassorbite, setRisorseRiassorbite] = useState<number>(0);
+  const [sommeTrasferimento, setSommeTrasferimento] = useState<number>(0);
+  const [quotaMinoriOneri, setQuotaMinoriOneri] = useState<number>(0);
+  const [riduzioneStabile, setRiduzioneStabile] = useState<number>(0);
+  const [taglioFondo2010, setTaglioFondo2010] = useState<number>(0);
+  const [riduzioniATA, setRiduzioniATA] = useState<number>(0);
+  const [decurtazioneFondo, setDecurtazioneFondo] = useState<number>(0);
+  const [euro84_50, setEuro84_50] = useState<number>(0);
+  const [risorseStanziate, setRisorseStanziate] = useState<number>(0);
+  const [differenzialiStipendiali2022, setDifferenzialiStipendiali2022] = useState<number>(0);
+  const [differenzialiB3D3, setDifferenzialiB3D3] = useState<number>(0);
 
-  // Input States - Risorse Decentrate Escluse dal Limite del Salario Accessorio
-  const [riseSpecifciDisposizioni, setRiseSpecificiDisposizioni] = useState<number>(0);
-  const [risContributoEntiTerziProgetti, setRisContributoEntiTerziProgetti] = useState<number>(0);
-  const [risPerfezioneProfessionale, setRisPerfezioneProfessionale] = useState<number>(0);
-  const [trasferimentoPersonale, setTrasferimentoPersonale] = useState<number>(0);
-  const [riseIntegrativeL125, setRiseIntegrativeL125] = useState<number>(0);
-  const [risorseSegreteria, setRisorseSegreteria] = useState<number>(0);
-  const [incentivazioni2018, setIncentivazioni2018] = useState<number>(0);
+  // Input States - FONTI DI FINANZIAMENTO VARIABILI SOGGETTE AL LIMITE
+  const [recuperoEvasione, setRecuperoEvasione] = useState<number>(0);
+  const [integrazioneRisorseVariabili, setIntegrazioneRisorseVariabili] = useState<number>(0);
+  const [risorsePersonaleCasino, setRisorsePersonaleCasino] = useState<number>(0);
+  const [monteSalari1997, setMonteSalari1997] = useState<number>(0);
+  const [integrazioneArt62, setIntegrazioneArt62] = useState<number>(0);
+  const [risorseAdeguamento, setRisorseAdeguamento] = useState<number>(0);
 
-  // Input States - Incrementi Soggetti al Limite del Salario Accessorio
-  const [incCCNL2018, setIncCCNL2018] = useState<number>(0);
-  const [incCCNL2022, setIncCCNL2022] = useState<number>(0);
-  const [incLimiteDecentrato, setIncLimiteDecentrato] = useState<number>(0);
+  // Input States - FONTI DI FINANZIAMENTO VARIABILI NON SOGGETTE AL LIMITE
+  const [sponsorizzazioni, setSponsorizzazioni] = useState<number>(0);
+  const [rimborsoNotifiche, setRimborsoNotifiche] = useState<number>(0);
+  const [pianiRazionalizzazione, setPianiRazionalizzazione] = useState<number>(0);
+  const [incentiviFunzioni, setIncentiviFunzioni] = useState<number>(0);
+  const [incentiviGiudizio, setIncentiviGiudizio] = useState<number>(0);
+  const [risparmiStraordinario, setRisparmiStraordinario] = useState<number>(0);
+  const [incrementoRegioni, setIncrementoRegioni] = useState<number>(0);
+  const [sommeNonUtilizzate, setSommeNonUtilizzate] = useState<number>(0);
+  const [incentiviIMUTARI, setIncentiviIMUTARI] = useState<number>(0);
+  const [risparmiPasto, setRisparmiPasto] = useState<number>(0);
+  const [risorseAssunzioni, setRisorseAssunzioni] = useState<number>(0);
+  const [incrementoFondo022, setIncrementoFondo022] = useState<number>(0);
+  const [euro84_50Tantum, setEuro84_50Tantum] = useState<number>(0);
+  const [incrementoFondo2022, setIncrementoFondo2022] = useState<number>(0);
+  const [incrementoPNRR, setIncrementoPNRR] = useState<number>(0);
 
-  // Input States - Soggette al Limite (Parte Stabile)
-  const [valoreConsolidato, setValoreConsolidato] = useState<number>(0);
-  const [incrementiCCNLPrecedenti, setIncrementiCCNLPrecedenti] = useState<number>(0);
-  const [assegniAdPersonam, setAssegniAdPersonam] = useState<number>(0);
-  const [dipendentiCessati, setDipendentiCessati] = useState<number>(0);
-  const [retribuzioneMediaCessati, setRetribuzioneMediaCessati] = useState<number>(0);
-
-  // Incrementi e Rimodulazione Fondo ex art. 79, c. 2 - VARIABILI
-  const [economieFondo, setEconomieFondo] = useState<number>(0);
-  const [risorseNuoviServizi, setRisorseNuoviServizi] = useState<number>(0);
-  const [proventiSponsorizz, setProventiSponsorizz] = useState<number>(0);
-  const [contributiEntiTerzi, setContributiEntiTerzi] = useState<number>(0);
-  const [risorseRecuperoEvasione, setRisorseRecuperoEvasione] = useState<number>(0);
-  const [proventiDirittiSegreteria, setProventiDirittiSegreteria] = useState<number>(0);
-  const [risorseL125, setRisorseL125] = useState<number>(0);
-  const [proventiCondoniEdilizi, setProventiCondoniEdilizi] = useState<number>(0);
-  const [specificheDisposizioni, setSpecificheDisposizioni] = useState<number>(0);
-  const [risorsePerformanceOrg, setRisorsePerformanceOrg] = useState<number>(0);
-  const [risorseL145, setRisorseL145] = useState<number>(0);
-
-  // Incrementi Finanziamento Fondo ex art. 80
-  const [risorseProgressioni, setRisorseProgressioni] = useState<number>(0);
-  const [risorseEfficientamento, setRisorseEfficientamento] = useState<number>(0);
-  const [risorseFlessioneOrario, setRisorseFlessioneOrario] = useState<number>(0);
-  const [altreRisorseIncremento, setAltreRisorseIncremento] = useState<number>(0);
-
-  // Copertura Finanziaria
-  const [risorseTitolo1, setRisorseTitolo1] = useState<number>(0);
-  const [risorseCapitolo, setRisorseCapitolo] = useState<number>(0);
-  const [risorseSuperifici, setRisorseSuperifici] = useState<number>(0);
-  const [risorseFondiEuropei, setRisorseFondiEuropei] = useState<number>(0);
-
-  // Fondi Speciali per Specifiche Destinazioni
-  const [fondoLavoriUBS, setFondoLavoriUBS] = useState<number>(0);
-  const [fondoAltriLavori, setFondoAltriLavori] = useState<number>(0);
-  const [specificheDestinazioni, setSpecificheDestinazioni] = useState<number>(0);
+  // Altri campi
+  const [incrementoSalarioDeroga, setIncrementoSalarioDeroga] = useState<number>(0);
+  const [misureVincoli, setMisureVincoli] = useState<number>(0);
+  const [limiteComplessivo2016, setLimiteComplessivo2016] = useState<number>(0);
 
   // Calculated Values
   const [risultati, setRisultati] = useState({
-    escluse: {
-      specificiDisposizioni: 0,
-      contributiEntiTerzi: 0,
-      perfezioneProfessionale: 0,
-      trasferimenti: 0,
-      integrative: 0,
-      segreteria: 0,
-      incentivazioni: 0,
-      totale: 0
-    },
-    incrementiSoggetti: {
-      ccnl2018: 0,
-      ccnl2022: 0,
-      limiteDecentrato: 0,
-      totale: 0
-    },
-    soggette: {
-      valoreConsolidato: 0,
-      incrementiCCNL: 0,
-      assegniAdPersonam: 0,
-      risorseCessazioni: 0,
-      totale: 0
-    },
-    variabili: {
-      economie: 0,
-      nuoviServizi: 0,
-      sponsorizzazioni: 0,
-      entiTerzi: 0,
-      recuperoEvasione: 0,
-      dirittiSegreteria: 0,
-      risorseL125: 0,
-      condoniEdilizi: 0,
-      specificheDisp: 0,
-      performanceOrg: 0,
-      risorseL145: 0,
-      totale: 0
-    },
-    incrementi: {
-      incrementoPersonale: 0,
-      incrementoMonteSalari: 0,
-      progressioni: 0,
-      efficientamento: 0,
-      flessione: 0,
-      altreRisorse: 0,
-      totale: 0
-    },
-    copertura: {
-      titolo1: 0,
-      capitolo: 0,
-      superifici: 0,
-      fondiEuropei: 0,
-      totale: 0
-    },
-    fondiSpeciali: {
-      lavoriUBS: 0,
-      altriLavori: 0,
-      specifiche: 0,
-      totale: 0
-    },
-    totaleFondo: 0,
-    totaleArt23: 0,
-    limiteTetto: 0,
-    sforamento: 0,
-    disponibilita: 0,
-    rispettaLimite: true
+    sommaStabili: 0,
+    sommaVariabiliSoggette: 0,
+    totaleParziale: 0,
+    decurtazioneIncremento: 0,
+    sommaVariabiliNonSoggette: 0,
+    totaleRisorse: 0
   });
 
   // Utility function for currency formatting
@@ -147,118 +78,32 @@ const Index = () => {
 
   // Main calculation function
   const calcolaRisultati = () => {
-    // Calcoli Risorse Escluse dal Limite
-    const totaleEscluse = riseSpecifciDisposizioni + risContributoEntiTerziProgetti + 
-      risPerfezioneProfessionale + trasferimentoPersonale + riseIntegrativeL125 + 
-      risorseSegreteria + incentivazioni2018;
+    const sommaStabili = fondoConsolidato2017 + alteProfessionalita + incremento83_20 + 
+      incrementiStipendiali + integrazioneRisorse + risorseRiassorbite + sommeTrasferimento + 
+      quotaMinoriOneri + riduzioneStabile - taglioFondo2010 - riduzioniATA - decurtazioneFondo + 
+      euro84_50 + risorseStanziate + differenzialiStipendiali2022 + differenzialiB3D3;
 
-    // Calcoli Incrementi Soggetti al Limite
-    const totaleIncrementiSoggetti = incCCNL2018 + incCCNL2022 + incLimiteDecentrato;
+    const sommaVariabiliSoggette = recuperoEvasione + integrazioneRisorseVariabili + 
+      risorsePersonaleCasino + monteSalari1997 + integrazioneArt62 + risorseAdeguamento;
 
-    // Calcoli Soggette al Limite (Parte Stabile)
-    const risorseCessazioni = dipendentiCessati * retribuzioneMediaCessati;
-    const totaleSoggette = valoreConsolidato + incrementiCCNLPrecedenti + 
-      assegniAdPersonam + risorseCessazioni;
+    const totaleParziale = sommaStabili + sommaVariabiliSoggette;
+    const decurtazioneIncremento = Math.max(0, totaleParziale - limiteComplessivo2016);
 
-    // Calcoli Parte Variabile
-    const totaleVariabili = economieFondo + risorseNuoviServizi + proventiSponsorizz + 
-      contributiEntiTerzi + risorseRecuperoEvasione + proventiDirittiSegreteria + 
-      risorseL125 + proventiCondoniEdilizi + specificheDisposizioni + 
-      risorsePerformanceOrg + risorseL145;
+    const sommaVariabiliNonSoggette = sponsorizzazioni + rimborsoNotifiche + pianiRazionalizzazione + 
+      incentiviFunzioni + incentiviGiudizio + risparmiStraordinario + incrementoRegioni + 
+      sommeNonUtilizzate + incentiviIMUTARI + risparmiPasto + risorseAssunzioni + 
+      incrementoFondo022 + euro84_50Tantum + incrementoFondo2022 + incrementoPNRR;
 
-    // Calcoli Incrementi CCNL
-    const incrementoPersonale = numeroDipendenti * 84.50 * (mesiDecorrenza / 12);
-    const incrementoMonteSalari = monteSalari2018 * 0.0022;
-    const totaleIncrementi = incrementoPersonale + incrementoMonteSalari + 
-      risorseProgressioni + risorseEfficientamento + risorseFlessioneOrario + 
-      altreRisorseIncremento;
-
-    // Calcoli Copertura Finanziaria
-    const totaleCopertura = risorseTitolo1 + risorseCapitolo + risorseSuperifici + 
-      risorseFondiEuropei;
-
-    // Calcoli Fondi Speciali
-    const totaleFondiSpeciali = fondoLavoriUBS + fondoAltriLavori + specificheDestinazioni;
-
-    // Calcoli Finali
-    const totaleFondo = totaleEscluse + totaleIncrementiSoggetti + totaleSoggette + 
-      totaleVariabili + totaleIncrementi + totaleCopertura + totaleFondiSpeciali;
-    
-    // Totale soggetto al limite art. 23 (escludendo le voci escluse)
-    const totaleArt23 = totaleIncrementiSoggetti + totaleSoggette + totaleVariabili + 
-      totaleIncrementi + totaleCopertura + totaleFondiSpeciali;
-    
-    const limiteTetto = trattamentoAccessorio2016;
-    const sforamento = Math.max(0, totaleArt23 - limiteTetto);
-    const disponibilita = Math.max(0, limiteTetto - totaleArt23);
-    const rispettaLimite = totaleArt23 <= limiteTetto;
+    const totaleRisorse = totaleParziale + sommaVariabiliNonSoggette + 
+      incrementoSalarioDeroga + misureVincoli;
 
     setRisultati({
-      escluse: {
-        specificiDisposizioni: riseSpecifciDisposizioni,
-        contributiEntiTerzi: risContributoEntiTerziProgetti,
-        perfezioneProfessionale: risPerfezioneProfessionale,
-        trasferimenti: trasferimentoPersonale,
-        integrative: riseIntegrativeL125,
-        segreteria: risorseSegreteria,
-        incentivazioni: incentivazioni2018,
-        totale: totaleEscluse
-      },
-      incrementiSoggetti: {
-        ccnl2018: incCCNL2018,
-        ccnl2022: incCCNL2022,
-        limiteDecentrato: incLimiteDecentrato,
-        totale: totaleIncrementiSoggetti
-      },
-      soggette: {
-        valoreConsolidato,
-        incrementiCCNL: incrementiCCNLPrecedenti,
-        assegniAdPersonam,
-        risorseCessazioni,
-        totale: totaleSoggette
-      },
-      variabili: {
-        economie: economieFondo,
-        nuoviServizi: risorseNuoviServizi,
-        sponsorizzazioni: proventiSponsorizz,
-        entiTerzi: contributiEntiTerzi,
-        recuperoEvasione: risorseRecuperoEvasione,
-        dirittiSegreteria: proventiDirittiSegreteria,
-        risorseL125,
-        condoniEdilizi: proventiCondoniEdilizi,
-        specificheDisp: specificheDisposizioni,
-        performanceOrg: risorsePerformanceOrg,
-        risorseL145,
-        totale: totaleVariabili
-      },
-      incrementi: {
-        incrementoPersonale,
-        incrementoMonteSalari,
-        progressioni: risorseProgressioni,
-        efficientamento: risorseEfficientamento,
-        flessione: risorseFlessioneOrario,
-        altreRisorse: altreRisorseIncremento,
-        totale: totaleIncrementi
-      },
-      copertura: {
-        titolo1: risorseTitolo1,
-        capitolo: risorseCapitolo,
-        superifici: risorseSuperifici,
-        fondiEuropei: risorseFondiEuropei,
-        totale: totaleCopertura
-      },
-      fondiSpeciali: {
-        lavoriUBS: fondoLavoriUBS,
-        altriLavori: fondoAltriLavori,
-        specifiche: specificheDestinazioni,
-        totale: totaleFondiSpeciali
-      },
-      totaleFondo,
-      totaleArt23,
-      limiteTetto,
-      sforamento,
-      disponibilita,
-      rispettaLimite
+      sommaStabili,
+      sommaVariabiliSoggette,
+      totaleParziale,
+      decurtazioneIncremento,
+      sommaVariabiliNonSoggette,
+      totaleRisorse
     });
   };
 
@@ -266,54 +111,38 @@ const Index = () => {
   useEffect(() => {
     calcolaRisultati();
   }, [
-    annoRiferimento, monteSalari2018, numeroDipendenti, mesiDecorrenza, trattamentoAccessorio2016,
-    riseSpecifciDisposizioni, risContributoEntiTerziProgetti, risPerfezioneProfessionale,
-    trasferimentoPersonale, riseIntegrativeL125, risorseSegreteria, incentivazioni2018,
-    incCCNL2018, incCCNL2022, incLimiteDecentrato, valoreConsolidato, incrementiCCNLPrecedenti,
-    assegniAdPersonam, dipendentiCessati, retribuzioneMediaCessati, economieFondo,
-    risorseNuoviServizi, proventiSponsorizz, contributiEntiTerzi, risorseRecuperoEvasione,
-    proventiDirittiSegreteria, risorseL125, proventiCondoniEdilizi, specificheDisposizioni,
-    risorsePerformanceOrg, risorseL145, risorseProgressioni, risorseEfficientamento,
-    risorseFlessioneOrario, altreRisorseIncremento, risorseTitolo1, risorseCapitolo,
-    risorseSuperifici, risorseFondiEuropei, fondoLavoriUBS, fondoAltriLavori, specificheDestinazioni
+    fondoConsolidato2017, alteProfessionalita, incremento83_20, incrementiStipendiali,
+    integrazioneRisorse, risorseRiassorbite, sommeTrasferimento, quotaMinoriOneri,
+    riduzioneStabile, taglioFondo2010, riduzioniATA, decurtazioneFondo, euro84_50,
+    risorseStanziate, differenzialiStipendiali2022, differenzialiB3D3, recuperoEvasione,
+    integrazioneRisorseVariabili, risorsePersonaleCasino, monteSalari1997, integrazioneArt62,
+    risorseAdeguamento, sponsorizzazioni, rimborsoNotifiche, pianiRazionalizzazione,
+    incentiviFunzioni, incentiviGiudizio, risparmiStraordinario, incrementoRegioni,
+    sommeNonUtilizzate, incentiviIMUTARI, risparmiPasto, risorseAssunzioni,
+    incrementoFondo022, euro84_50Tantum, incrementoFondo2022, incrementoPNRR,
+    incrementoSalarioDeroga, misureVincoli, limiteComplessivo2016
   ]);
 
-  const ResultRow = ({ description, reference, amount, isTotal = false, isExcluded = false }: {
-    description: string;
-    reference: string;
-    amount: number;
-    isTotal?: boolean;
-    isExcluded?: boolean;
-  }) => (
-    <div className={`grid grid-cols-4 gap-4 py-2 ${isTotal ? 'border-t-2 border-gray-300 font-bold bg-gray-50' : ''} ${isExcluded ? 'bg-blue-50' : ''}`}>
-      <div className="text-sm">{description}</div>
-      <div className="text-xs text-gray-600">{reference}</div>
-      <div className={`text-right font-mono ${isTotal ? 'text-lg font-bold' : ''}`}>
-        {formatCurrency(amount)}
-      </div>
-      <div className="text-xs text-center">
-        <span className={`px-2 py-1 rounded text-white ${isExcluded ? 'bg-blue-500' : 'bg-green-500'}`}>
-          {isExcluded ? 'ESCLUSE' : 'SOGGETTE'}
-        </span>
-      </div>
-    </div>
-  );
-
-  const TooltipInput = ({ id, label, value, onChange, tooltip, type = "number" }: {
+  const TooltipInput = ({ id, label, value, onChange, tooltip, normativo }: {
     id: string;
     label: string;
     value: number;
     onChange: (value: number) => void;
     tooltip: string;
-    type?: string;
+    normativo: string;
   }) => (
-    <div>
-      <div className="flex items-center gap-2 mb-1">
-        <Label htmlFor={id}>{label}</Label>
+    <div className="space-y-2">
+      <div className="flex items-start gap-2">
+        <div className="flex-1">
+          <Label htmlFor={id} className="text-sm font-medium leading-tight">
+            {normativo}
+          </Label>
+          <p className="text-xs text-gray-600 mt-1">{label}</p>
+        </div>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" className="cursor-help">
+              <button type="button" className="cursor-help mt-1">
                 <HelpCircle className="h-4 w-4 text-gray-400 hover:text-gray-600" />
               </button>
             </TooltipTrigger>
@@ -325,7 +154,7 @@ const Index = () => {
       </div>
       <Input
         id={id}
-        type={type}
+        type="number"
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         className="mt-1"
@@ -345,861 +174,506 @@ const Index = () => {
           <p className="text-lg text-gray-600">
             Comparto Funzioni Locali - CCNL 16.11.2022
           </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Verifica completa con distinzione voci soggette/escluse dal limite art. 23, c. 2, D.Lgs. 75/2017
-          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* SEZIONE DATI DI INPUT */}
+          {/* SEZIONE INPUT */}
           <div className="space-y-6">
+            
+            {/* Limite 2016 */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl text-blue-900">📋 Dati di Input</CardTitle>
+                <CardTitle className="text-xl text-red-900">🎯 Limite di Riferimento</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent>
+                <div>
+                  <Label htmlFor="limite2016">Tetto complessivo del salario accessorio dell'anno 2016 (€)</Label>
+                  <Input
+                    id="limite2016"
+                    type="number"
+                    value={limiteComplessivo2016}
+                    onChange={(e) => setLimiteComplessivo2016(Number(e.target.value))}
+                    className="mt-1"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* FONTI DI FINANZIAMENTO STABILI */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl text-blue-900">📋 FONTI DI FINANZIAMENTO STABILI</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 
-                {/* Dati Generali */}
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-3 border-b pb-1">Dati Generali</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="anno">Anno di Riferimento</Label>
-                      <Input
-                        id="anno"
-                        type="number"
-                        value={annoRiferimento}
-                        onChange={(e) => setAnnoRiferimento(Number(e.target.value))}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="montesalari">Monte Salari Anno 2018 (€)</Label>
-                      <Input
-                        id="montesalari"
-                        type="number"
-                        value={monteSalari2018}
-                        onChange={(e) => setMonteSalari2018(Number(e.target.value))}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="dipendenti">N° Dipendenti al 31/12 anno precedente</Label>
-                      <Input
-                        id="dipendenti"
-                        type="number"
-                        value={numeroDipendenti}
-                        onChange={(e) => setNumeroDipendenti(Number(e.target.value))}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="mesi">Mesi decorrenza incremento CCNL</Label>
-                      <Select value={mesiDecorrenza.toString()} onValueChange={(value) => setMesiDecorrenza(Number(value))}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({length: 12}, (_, i) => i + 1).map(month => (
-                            <SelectItem key={month} value={month.toString()}>{month}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="md:col-span-2">
-                      <Label htmlFor="tetto2016">Trattamento Accessorio 2016 - Limite (€)</Label>
-                      <Input
-                        id="tetto2016"
-                        type="number"
-                        value={trattamentoAccessorio2016}
-                        onChange={(e) => setTrattamentoAccessorio2016(Number(e.target.value))}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                </div>
+                <TooltipInput
+                  id="fondo2017"
+                  label="Unico importo del fondo del salario accessorio consolidato all'anno 2017."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 1"
+                  value={fondoConsolidato2017}
+                  onChange={setFondoConsolidato2017}
+                  tooltip="Importo consolidato del fondo per il salario accessorio riferito all'anno 2017"
+                />
 
-                <Separator />
+                <TooltipInput
+                  id="alte-prof"
+                  label="Alte professionalità 0,20% monte salari 2001, esclusa la quota relativa ai dirigenza, nel caso in cui tali risorse non siano state utilizzate (da inserire solo se l'importo annuale non è stato già ricompreso nell'unico importo storicizzato)."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 1"
+                  value={alteProfessionalita}
+                  onChange={setAlteProfessionalita}
+                  tooltip="Risorse per alte professionalità calcolate come 0,20% del monte salari 2001"
+                />
 
-                {/* PARTE STABILE */}
-                <div>
-                  <h3 className="font-semibold text-green-700 mb-3 border-b pb-1">
-                    🟢 PARTE STABILE - SOGGETTE AL LIMITE DEL SALARIO ACCESSORIO
-                  </h3>
-                  <div className="space-y-3 bg-green-50 p-4 rounded">
-                    <TooltipInput
-                      id="consolidato"
-                      label="Valore consolidato anno precedente (€)"
-                      value={valoreConsolidato}
-                      onChange={setValoreConsolidato}
-                      tooltip="Il valore del fondo costituito al 31.12 dell'anno precedente al netto degli istituti variabili"
-                    />
-                    
-                    <TooltipInput
-                      id="incrementiprec"
-                      label="Incrementi CCNL precedenti (€)"
-                      value={incrementiCCNLPrecedenti}
-                      onChange={setIncrementiCCNLPrecedenti}
-                      tooltip="Importi derivanti dall'applicazione dei CCNL precedenti all'ultimo sottoscritto"
-                    />
-                    
-                    <TooltipInput
-                      id="assegni"
-                      label="Assegni ad personam (€)"
-                      value={assegniAdPersonam}
-                      onChange={setAssegniAdPersonam}
-                      tooltip="Assegni ad personam non riassorbibili di cui all'art. 30, comma 1, lett. c)"
-                    />
-                    
-                    <div className="bg-white p-3 rounded">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Label className="text-sm font-medium">Cessazioni Anno Precedente</Label>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button type="button" className="cursor-help">
-                                <HelpCircle className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="max-w-sm p-3">
-                              <p className="text-sm">Risorse stabili conseguenti alla cessazione dal servizio di personale dirigente e di comparto, anche a domanda, nell'anno precedente</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <Label htmlFor="cessati" className="text-xs">N° Dipendenti cessati</Label>
-                          <Input
-                            id="cessati"
-                            type="number"
-                            value={dipendentiCessati}
-                            onChange={(e) => setDipendentiCessati(Number(e.target.value))}
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="retribmedia" className="text-xs">Retrib. acc. media annua (€)</Label>
-                          <Input
-                            id="retribmedia"
-                            type="number"
-                            value={retribuzioneMediaCessati}
-                            onChange={(e) => setRetribuzioneMediaCessati(Number(e.target.value))}
-                            className="mt-1"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <TooltipInput
+                  id="inc-83-20"
+                  label="Incremento di 83,20 per unità di personale in servizio al 31.12.2015 a valere dall'anno 2019 (risorse non soggette al limite)."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 2 lett. a)"
+                  value={incremento83_20}
+                  onChange={setIncremento83_20}
+                  tooltip="Incremento fisso per unità di personale in servizio, non soggetto al limite del salario accessorio"
+                />
 
-                <Separator />
+                <TooltipInput
+                  id="inc-stip"
+                  label="Incrementi stipendiali differenziali previsti dall'art. 64 per il personale in servizio (risorse non soggette al limite)."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 2 lett. b)"
+                  value={incrementiStipendiali}
+                  onChange={setIncrementiStipendiali}
+                  tooltip="Incrementi differenziali stipendiali per il personale in servizio"
+                />
 
-                {/* PARTE VARIABILE - SOGGETTE AL LIMITE */}
-                <div>
-                  <h3 className="font-semibold text-green-700 mb-3 border-b pb-1">
-                    🟢 PARTE VARIABILE - SOGGETTE AL LIMITE DEL SALARIO ACCESSORIO
-                  </h3>
-                  <div className="space-y-3 bg-green-50 p-4 rounded">
-                    <TooltipInput
-                      id="economie"
-                      label="Economie fondo anno precedente (€)"
-                      value={economieFondo}
-                      onChange={setEconomieFondo}
-                      tooltip="Economie del fondo relative all'anno precedente"
-                    />
-                    
-                    <TooltipInput
-                      id="nuoviservizi"
-                      label="Risorse per attivazione nuovi servizi (€)"
-                      value={risorseNuoviServizi}
-                      onChange={setRisorseNuoviServizi}
-                      tooltip="Risorse conseguenti alla attivazione di nuovi servizi o ad incrementi di quelli esistenti"
-                    />
-                    
-                    <TooltipInput
-                      id="condoni"
-                      label="Proventi condoni edilizi (€)"
-                      value={proventiCondoniEdilizi}
-                      onChange={setProventiCondoniEdilizi}
-                      tooltip="Proventi derivanti dai condoni edilizi"
-                    />
-                    
-                    <TooltipInput
-                      id="performance"
-                      label="Performance organizzativa (art. 59, c. 1-bis, D.Lgs. 150/09) (€)"
-                      value={risorsePerformanceOrg}
-                      onChange={setRisorsePerformanceOrg}
-                      tooltip="Risorse per la performance organizzativa ex art. 59, comma 1-bis, del D.Lgs. 150/2009"
-                    />
-                    
-                    <TooltipInput
-                      id="l145"
-                      label="Risorse L. 145/2018 (c. 1091) (€)"
-                      value={risorseL145}
-                      onChange={setRisorseL145}
-                      tooltip="Risorse derivanti dalla Legge 145/2018, comma 1091"
-                    />
-                  </div>
-                </div>
+                <TooltipInput
+                  id="int-ris"
+                  label="Integrazione risorse dell'importo annuo della retribuzione individuale di anzianità e degli assegni ad personam in godimento da parte del personale comunque cessato dal servizio l'anno precedente (da inserire solo le nuove risorse che si liberano a partire dalle cessazioni verificatesi nell'anno precedente)."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 4 del CCNL 2001 c. 2 - art. 67 del CCNL 2018 c. 2 lett. c)"
+                  value={integrazioneRisorse}
+                  onChange={setIntegrazioneRisorse}
+                  tooltip="Risorse liberate dalle cessazioni del personale nell'anno precedente"
+                />
 
-                <Separator />
+                <TooltipInput
+                  id="ris-riass"
+                  label="Eventuali risorse riassorbite ai sensi dell'art. 2, comma 3 del decreto legislativo 30 marzo 2001, n. 165/2001 (trattamenti economici più favorevoli in godimento)."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 2 lett. d)"
+                  value={risorseRiassorbite}
+                  onChange={setRisorseRiassorbite}
+                  tooltip="Risorse riassorbite da trattamenti economici più favorevoli"
+                />
 
-                {/* PARTE VARIABILE - NON SOGGETTE AL LIMITE */}
-                <div>
-                  <h3 className="font-semibold text-blue-700 mb-3 border-b pb-1">
-                    🔵 PARTE VARIABILE - NON SOGGETTE AL LIMITE DEL SALARIO ACCESSORIO
-                  </h3>
-                  <div className="space-y-3 bg-blue-50 p-4 rounded">
-                    <TooltipInput
-                      id="sponsor"
-                      label="Proventi da sponsorizzazioni (€)"
-                      value={proventiSponsorizz}
-                      onChange={setProventiSponsorizz}
-                      tooltip="Proventi derivanti da contratti di sponsorizzazione o accordi di collaborazione con soggetti privati"
-                    />
-                    
-                    <TooltipInput
-                      id="entiterzi"
-                      label="Contributi da enti terzi (UE, Stato, Regioni) (€)"
-                      value={contributiEntiTerzi}
-                      onChange={setContributiEntiTerzi}
-                      tooltip="Contributi e finanziamenti dell'Unione europea e di organismi internazionali dello Stato e delle Regioni per progettualità specifiche"
-                    />
-                    
-                    <TooltipInput
-                      id="recuperoevas"
-                      label="Recupero evasione ICI/IMU/TARI (€)"
-                      value={risorseRecuperoEvasione}
-                      onChange={setRisorseRecuperoEvasione}
-                      tooltip="Proventi derivanti dall'attività di recupero dell'evasione ICI/IMU/TARI"
-                    />
-                    
-                    <TooltipInput
-                      id="dirittisegr"
-                      label="Diritti di segreteria e rogito (€)"
-                      value={proventiDirittiSegreteria}
-                      onChange={setProventiDirittiSegreteria}
-                      tooltip="Proventi derivanti dai diritti di segreteria e di rogito"
-                    />
-                    
-                    <TooltipInput
-                      id="l125"
-                      label="Risorse L. 125/2013 (€)"
-                      value={risorseL125}
-                      onChange={setRisorseL125}
-                      tooltip="Risorse per il personale previste dalla Legge 125/2013"
-                    />
-                    
-                    <TooltipInput
-                      id="specifiche"
-                      label="Specifiche disposizioni di legge (€)"
-                      value={specificheDisposizioni}
-                      onChange={setSpecificheDisposizioni}
-                      tooltip="Risorse derivanti da specifiche disposizioni di legge che incrementano il trattamento accessorio"
-                    />
-                  </div>
-                </div>
+                <TooltipInput
+                  id="somme-trasf"
+                  label="Somme connesse al trattamento economico accessorio del personale trasferito agli enti del comparto a seguito processi di decentramento e delega di funzioni."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 15 del CCNL 1999 c. 1 lett. l) - art. 67 del CCNL 2018 c. 2 lett. e)"
+                  value={sommeTrasferimento}
+                  onChange={setSommeTrasferimento}
+                  tooltip="Risorse derivanti dal trasferimento di personale da altri enti"
+                />
 
-                <Separator />
+                <TooltipInput
+                  id="quota-oneri"
+                  label="Per le Regioni, quota minori oneri dalla riduzione stabile di posti in organico qualifica dirigenziale, fino a 0,2% monte salari della stessa dirigenza, da destinare al fondo di cui all'art. 17, c. 2, lett. c); sono fatti salvi gli accordi di miglior favore."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 15 del CCNL 1999 c. 1 lett. i) - art. 67 del CCNL 2018 c. 2 lett. f)"
+                  value={quotaMinoriOneri}
+                  onChange={setQuotaMinoriOneri}
+                  tooltip="Solo per le Regioni: quota derivante dalla riduzione di posti dirigenziali"
+                />
 
-                {/* Risorse Escluse dal Limite */}
-                <div>
-                  <h3 className="font-semibold text-blue-700 mb-3 border-b pb-1">
-                    🔵 ALTRE RISORSE ESCLUSE DAL LIMITE DEL SALARIO ACCESSORIO
-                  </h3>
-                  <div className="space-y-3 bg-blue-50 p-4 rounded">
-                    <TooltipInput
-                      id="specificiescl"
-                      label="Specifici disposizioni di legge escluse (€)"
-                      value={riseSpecifciDisposizioni}
-                      onChange={setRiseSpecificiDisposizioni}
-                      tooltip="Risorse specifiche previste da disposizioni di legge e escluse dal calcolo del limite"
-                    />
-                    
-                    <TooltipInput
-                      id="contributi"
-                      label="Contributi enti terzi per progetti (€)"
-                      value={risContributoEntiTerziProgetti}
-                      onChange={setRisContributoEntiTerziProgetti}
-                      tooltip="Contributi di enti terzi per progetti specifici esclusi dal limite"
-                    />
-                    
-                    <TooltipInput
-                      id="perfezionamento"
-                      label="Perfezionamento professionale (€)"
-                      value={risPerfezioneProfessionale}
-                      onChange={setRisPerfezioneProfessionale}
-                      tooltip="Risorse destinate ad attività di perfezionamento professionale"
-                    />
-                    
-                    <TooltipInput
-                      id="trasferimenti"
-                      label="Trasferimento di personale (€)"
-                      value={trasferimentoPersonale}
-                      onChange={setTrasferimentoPersonale}
-                      tooltip="Risorse relative al trasferimento di personale"
-                    />
-                    
-                    <TooltipInput
-                      id="integrative"
-                      label="Risorse integrative L. 125/2013 (€)"
-                      value={riseIntegrativeL125}
-                      onChange={setRiseIntegrativeL125}
-                      tooltip="Risorse integrative previste dalla Legge 125/2013"
-                    />
-                    
-                    <TooltipInput
-                      id="segreteria2"
-                      label="Risorse Segreteria (€)"
-                      value={risorseSegreteria}
-                      onChange={setRisorseSegreteria}
-                      tooltip="Risorse specifiche per la segreteria"
-                    />
-                    
-                    <TooltipInput
-                      id="incentivazioni"
-                      label="Incentivazioni 2018 (€)"
-                      value={incentivazioni2018}
-                      onChange={setIncentivazioni2018}
-                      tooltip="Incentivazioni previste per l'anno 2018"
-                    />
-                  </div>
-                </div>
+                <TooltipInput
+                  id="rid-stabile"
+                  label="Riduzione stabile dello straordinario."
+                  normativo="Art. 79 c. 1 CCNL 2022. Art. 14 del CCNL 1999 c. 3 - art. 67 del CCNL 2018 c. 2 lett. g)"
+                  value={riduzioneStabile}
+                  onChange={setRiduzioneStabile}
+                  tooltip="Risorse derivanti dalla riduzione stabile del lavoro straordinario"
+                />
 
-                <Separator />
+                <TooltipInput
+                  id="taglio-2010"
+                  label="Eventuale taglio del fondo storicizzato - Art. 9 comma 2 bis D.L. n.78/2010 convertito in L.122/2010 Per il triennio 2011/2013 il tetto dei fondi per le risorse decentrate dei dipendenti e dei dirigenti non può superare quello del 2010 ed è ridotto automaticamente in proporzione alla riduzione del personale in servizio e s.m.i. da sottrarre (da inserire solo se l'importo annuale non è stato già ricompreso nell'unico importo storicizzato)."
+                  normativo="Eventuale taglio del fondo storicizzato - Art. 9 comma 2 bis D.L. n.78/2010"
+                  value={taglioFondo2010}
+                  onChange={setTaglioFondo2010}
+                  tooltip="Eventuale riduzione del fondo applicata nel triennio 2011-2013"
+                />
 
-                {/* Incrementi Soggetti al Limite */}
-                <div>
-                  <h3 className="font-semibold text-green-700 mb-3 border-b pb-1">
-                    🟢 INCREMENTI SOGGETTI AL LIMITE DEL SALARIO ACCESSORIO
-                  </h3>
-                  <div className="space-y-3 bg-green-50 p-4 rounded">
-                    <TooltipInput
-                      id="ccnl2018"
-                      label="Incrementi CCNL 2018 (€)"
-                      value={incCCNL2018}
-                      onChange={setIncCCNL2018}
-                      tooltip="Incrementi derivanti dal CCNL 2018"
-                    />
-                    
-                    <TooltipInput
-                      id="ccnl2022"
-                      label="Incrementi CCNL 2022 (€)"
-                      value={incCCNL2022}
-                      onChange={setIncCCNL2022}
-                      tooltip="Incrementi derivanti dal CCNL 2022"
-                    />
-                    
-                    <TooltipInput
-                      id="limitedecentrato"
-                      label="Incremento limite decentrato (€)"
-                      value={incLimiteDecentrato}
-                      onChange={setIncLimiteDecentrato}
-                      tooltip="Incrementi del limite decentrato"
-                    />
-                  </div>
-                </div>
+                <TooltipInput
+                  id="rid-ata"
+                  label="Eventuali riduzioni del fondo per personale ATA, posizioni organizzative, processi di esternalizzazione o trasferimento di personale"
+                  normativo="Eventuali riduzioni del fondo per personale ATA"
+                  value={riduzioniATA}
+                  onChange={setRiduzioniATA}
+                  tooltip="Riduzioni dovute a trasferimenti o esternalizzazioni di personale"
+                />
 
-                <Separator />
+                <TooltipInput
+                  id="decurt-fondo"
+                  label="decurtazione fondo posizioni organizzative e alte professionalità, compreso il risultato, per gli enti con la dirigenza."
+                  normativo="Art. 67 c. 1 CCNL 21.05.2018"
+                  value={decurtazioneFondo}
+                  onChange={setDecurtazioneFondo}
+                  tooltip="Decurtazione per enti con dirigenza delle risorse per posizioni organizzative"
+                />
 
-                {/* Incrementi e Rimodulazione Fondo ex art. 79, c. 2 - VARIABILI */}
-                <div>
-                  <h3 className="font-semibold text-green-700 mb-3 border-b pb-1">
-                    🟢 INCREMENTI E RIMODULAZIONE FONDO ex art. 79, c. 2 - VARIABILI
-                  </h3>
-                  <div className="space-y-3 bg-green-50 p-4 rounded">
-                    <TooltipInput
-                      id="progressioni"
-                      label="Risorse per progressioni tra aree (€)"
-                      value={risorseProgressioni}
-                      onChange={setRisorseProgressioni}
-                      tooltip="Risorse destinate alle progressioni tra aree professionali"
-                    />
-                    
-                    <TooltipInput
-                      id="efficientamento"
-                      label="Efficientamento servizi (€)"
-                      value={risorseEfficientamento}
-                      onChange={setRisorseEfficientamento}
-                      tooltip="Risorse derivanti dall'efficientamento dei servizi"
-                    />
-                    
-                    <TooltipInput
-                      id="flessione"
-                      label="Flessione orario di lavoro (€)"
-                      value={risorseFlessioneOrario}
-                      onChange={setRisorseFlessioneOrario}
-                      tooltip="Risorse conseguenti alla flessione dell'orario di lavoro"
-                    />
-                    
-                    <TooltipInput
-                      id="altrerisorse"
-                      label="Altre risorse per incremento (€)"
-                      value={altreRisorseIncremento}
-                      onChange={setAltreRisorseIncremento}
-                      tooltip="Altre risorse destinate all'incremento del fondo"
-                    />
-                  </div>
-                </div>
+                <TooltipInput
+                  id="euro-84-50"
+                  label="Euro 84,50 per n. unità in servizio al 31.12.2018 con decorrenza dal 01.01.2021 (da calcolarsi per intero sulle unità in servizio, risorse non soggette al limite)."
+                  normativo="Art. 79 c. 1 lett. b) CCNL 2022"
+                  value={euro84_50}
+                  onChange={setEuro84_50}
+                  tooltip="Incremento fisso per unità di personale, non soggetto al limite"
+                />
 
-                <Separator />
+                <TooltipInput
+                  id="ris-stanz"
+                  label="risorse stanziate dagli enti in caso di incremento stabile della consistenza di personale, in coerenza con il piano dei fabbisogni, al fine di sostenere gli oneri dei maggiori trattamenti economici del personale."
+                  normativo="Art. 79 c. 1 lett. c) CCNL 2022"
+                  value={risorseStanziate}
+                  onChange={setRisorseStanziate}
+                  tooltip="Risorse per incrementi stabili di personale"
+                />
 
-                {/* Copertura Finanziaria */}
-                <div>
-                  <h3 className="font-semibold text-green-700 mb-3 border-b pb-1">
-                    🟢 COPERTURA FINANZIARIA
-                  </h3>
-                  <div className="space-y-3 bg-green-50 p-4 rounded">
-                    <TooltipInput
-                      id="titolo1"
-                      label="Risorse Titolo 1 (€)"
-                      value={risorseTitolo1}
-                      onChange={setRisorseTitolo1}
-                      tooltip="Risorse provenienti dal Titolo 1 del bilancio"
-                    />
-                    
-                    <TooltipInput
-                      id="capitolo"
-                      label="Risorse Capitolo (€)"
-                      value={risorseCapitolo}
-                      onChange={setRisorseCapitolo}
-                      tooltip="Risorse provenienti da specifici capitoli di bilancio"
-                    />
-                    
-                    <TooltipInput
-                      id="superifici"
-                      label="Risorse Superfici (€)"
-                      value={risorseSuperifici}
-                      onChange={setRisorseSuperifici}
-                      tooltip="Risorse derivanti dalla gestione delle superfici"
-                    />
-                    
-                    <TooltipInput
-                      id="fondi"
-                      label="Risorse Fondi Europei (€)"
-                      value={risorseFondiEuropei}
-                      onChange={setRisorseFondiEuropei}
-                      tooltip="Risorse provenienti da fondi europei"
-                    />
-                  </div>
-                </div>
+                <TooltipInput
+                  id="diff-2022"
+                  label="differenziali stipendiali personale in servizio nell'anno 2022 (risorse non soggette al limite)."
+                  normativo="Art. 79 c. 1 lett. d) CCNL 2022"
+                  value={differenzialiStipendiali2022}
+                  onChange={setDifferenzialiStipendiali2022}
+                  tooltip="Differenziali stipendiali per personale in servizio nel 2022"
+                />
 
-                <Separator />
-
-                {/* Fondi Speciali per Specifiche Destinazioni */}
-                <div>
-                  <h3 className="font-semibold text-green-700 mb-3 border-b pb-1">
-                    🟢 FONDI SPECIALI PER SPECIFICHE DESTINAZIONI
-                  </h3>
-                  <div className="space-y-3 bg-green-50 p-4 rounded">
-                    <TooltipInput
-                      id="lavoriubs"
-                      label="Fondo Lavori UBS (€)"
-                      value={fondoLavoriUBS}
-                      onChange={setFondoLavoriUBS}
-                      tooltip="Fondo per lavori presso Uffici di Base Speciali"
-                    />
-                    
-                    <TooltipInput
-                      id="altrilavori"
-                      label="Fondo Altri Lavori (€)"
-                      value={fondoAltriLavori}
-                      onChange={setFondoAltriLavori}
-                      tooltip="Fondo per altri tipi di lavori specifici"
-                    />
-                    
-                    <TooltipInput
-                      id="destinazioni"
-                      label="Specifiche Destinazioni (€)"
-                      value={specificheDestinazioni}
-                      onChange={setSpecificheDestinazioni}
-                      tooltip="Fondi per specifiche destinazioni normative"
-                    />
-                  </div>
-                </div>
+                <TooltipInput
+                  id="diff-b3d3"
+                  label="differenze stipendiali personale inquadrato in B3 e D3 (risorse non soggette al limite)."
+                  normativo="Art. 79 c. 1-bis CCNL 2022"
+                  value={differenzialiB3D3}
+                  onChange={setDifferenzialiB3D3}
+                  tooltip="Differenze stipendiali specifiche per categorie B3 e D3"
+                />
 
               </CardContent>
             </Card>
+
+            {/* FONTI DI FINANZIAMENTO VARIABILI SOGGETTE AL LIMITE */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl text-orange-900">🟡 FONTI DI FINANZIAMENTO VARIABILI SOGGETTE AL LIMITE</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+
+                <TooltipInput
+                  id="rec-evas"
+                  label="Ricomprende sia le risorse derivanti dalla applicazione dell'art. 3, comma 57 della legge n. 662 del 1996 e dall'art. 59, comma 1, lett. p) del D. Lgs.n.446 del 1997 (recupero evasione ICI), sia le ulteriori risorse correlate agli effetti applicativi dell'art. 12, comma 1, lett. b) del D.L. n. 437 del 1996, convertito nella legge n. 556 del 1996."
+                  normativo="Art. 4 del CCNL del 5/10/2001 c. 3), art. 15 c. 1 lett. k) CCNL 01.041999 - art. 67 del CCNL del 21.02.2018 c. 3 lett. c)"
+                  value={recuperoEvasione}
+                  onChange={setRecuperoEvasione}
+                  tooltip="Risorse da recupero evasione fiscale ICI e altre correlate"
+                />
+
+                <TooltipInput
+                  id="int-var"
+                  label="Integrazione risorse dell'importo mensile residuo della retribuzione individuale di anzianità e degli assegni ad personam in godimento da parte del personale comunque cessato nell'anno in corso."
+                  normativo="Art. 4 del CCNL 5/10/2001 c. 2 - art. 67 del CCNL del 21.05.2018 c. 3 lett. d)"
+                  value={integrazioneRisorseVariabili}
+                  onChange={setIntegrazioneRisorseVariabili}
+                  tooltip="Integrazione per cessazioni nell'anno in corso"
+                />
+
+                <TooltipInput
+                  id="casino"
+                  label="Risorse destinate ai trattamenti accessori personale delle case da gioco."
+                  normativo="Art. 67 del CCNL del 21.05.2018 c. 3 lett. g)"
+                  value={risorsePersonaleCasino}
+                  onChange={setRisorsePersonaleCasino}
+                  tooltip="Risorse specifiche per personale delle case da gioco"
+                />
+
+                <TooltipInput
+                  id="monte-1997"
+                  label="Un importo massimo corrispondente all'1,2 % su base annua, del monte salari dell'anno 1997, relativo al personale destinatario del presente CCNL."
+                  normativo="Art. 79 c. 2 lett. b) CCNL 2022"
+                  value={monteSalari1997}
+                  onChange={setMonteSalari1997}
+                  tooltip="Incremento basato sull'1,2% del monte salari 1997"
+                />
+
+                <TooltipInput
+                  id="int-art62"
+                  label="Integrazione all'art. 62 del CCNL del 21.02.2018 c. 2 lett. e) somme connesse al trattamento economico accessorio del personale trasferito agli enti del comparto a seguito processi di decentramento e delega di funzioni."
+                  normativo="Art. 67 del CCNL del 21.05.2018 c. 3 lett. k)"
+                  value={integrazioneArt62}
+                  onChange={setIntegrazioneArt62}
+                  tooltip="Integrazione per personale trasferito con procedure di decentramento"
+                />
+
+                <TooltipInput
+                  id="ris-adeg"
+                  label="Risorse finalizzate ad adeguare le disponibilità del Fondo sulla base di scelte organizzative, gestionali e di politica retributiva degli enti, anche connesse ad assunzioni di personale a tempo determinato."
+                  normativo="Art. 79 c. 2 lett. c) CCNL 2022"
+                  value={risorseAdeguamento}
+                  onChange={setRisorseAdeguamento}
+                  tooltip="Risorse per adeguamento del fondo basato su scelte organizzative"
+                />
+
+              </CardContent>
+            </Card>
+
+            {/* FONTI DI FINANZIAMENTO VARIABILI NON SOGGETTE AL LIMITE */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl text-green-900">🟢 FONTI DI FINANZIAMENTO VARIABILI NON SOGGETTE AL LIMITE</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+
+                <TooltipInput
+                  id="sponsor"
+                  label="Somme derivanti dall'attuazione dell'art. 43, L. 449/1997 (contratti di nuove sponsorizzazione – convenzioni – contributi dell'utenza)."
+                  normativo="Art. 15 del CCNL 1/4/1999 c. 1 lett. d) - Art. 67 del CCNL del 21.05.2018 c. 3 lett. a)"
+                  value={sponsorizzazioni}
+                  onChange={setSponsorizzazioni}
+                  tooltip="Entrate da sponsorizzazioni e convenzioni con soggetti privati"
+                />
+
+                <TooltipInput
+                  id="notifiche"
+                  label="Quota parte rimborso spese per notificazione atti dell'amministrazione finanziaria (messi notificatori)."
+                  normativo="Art. 54 CCNL 14/9/2000 - Art. 67 del CCNL del 21.05.2018 c. 3 lett. f)"
+                  value={rimborsoNotifiche}
+                  onChange={setRimborsoNotifiche}
+                  tooltip="Rimborsi per attività di notificazione atti"
+                />
+
+                <TooltipInput
+                  id="razion"
+                  label="Piani di razionalizzazione e riqualificazione della spesa."
+                  normativo="ART. 15 c. 1 lett. K), ART. 16, COMMI 4, 5 e 6 DL 98/2011 - Art. 67 del CCNL del 21.05.2018 c. 3 lett. b)"
+                  value={pianiRazionalizzazione}
+                  onChange={setPianiRazionalizzazione}
+                  tooltip="Risorse da piani di razionalizzazione della spesa pubblica"
+                />
+
+                <TooltipInput
+                  id="incentivi"
+                  label="Incentivi per funzioni tecniche, art. 45 dlgs 36/2023, art. 76 dlgs 56/2017, per condono edilizio, per repressione illeciti edilizi, indennità centralinisti non vedenti."
+                  normativo="Art. 15 c.1 lett. k) CCNL 1998-2001 - art. 67 del CCNL del 21.05.2018 c. 3 lett. c)"
+                  value={incentiviFunzioni}
+                  onChange={setIncentiviFunzioni}
+                  tooltip="Incentivi per varie funzioni tecniche e specialistiche"
+                />
+
+                <TooltipInput
+                  id="giudizio"
+                  label="Incentivi spese del giudizio, compensi censimento e ISTAT."
+                  normativo="Art. 18 c. lett. h) e Art. 67 del CCNL del 21.05.2018 c. 3 lett. c)"
+                  value={incentiviGiudizio}
+                  onChange={setIncentiviGiudizio}
+                  tooltip="Compensi per attività giudiziarie e statistiche"
+                />
+
+                <TooltipInput
+                  id="straord"
+                  label="Eventuali risparmi derivanti dalla applicazione della disciplina dello straordinario di cui all'art. 14."
+                  normativo="Art. 15, comma 1, del CCNL 1/4/1999 lett. m) - Art. 67 del CCNL del 21.05.2018 c. 3 lett. e)"
+                  value={risparmiStraordinario}
+                  onChange={setRisparmiStraordinario}
+                  tooltip="Risparmi dalla gestione del lavoro straordinario"
+                />
+
+                <TooltipInput
+                  id="regioni"
+                  label="Per le Regioni a statuto ordinario e Città Metropolitane ai sensi dell'art. 23 c. 4 del dlgs 75/2017 incremento percentuale dell'importo di cui all'art. 67 c. 1 e 2."
+                  normativo="Art. 67 del CCNL del 21.05.2018 c. 3 lett. j)"
+                  value={incrementoRegioni}
+                  onChange={setIncrementoRegioni}
+                  tooltip="Incremento specifico per Regioni e Città Metropolitane"
+                />
+
+                <TooltipInput
+                  id="non-util"
+                  label="Somme non utilizzate negli esercizi precedenti (di parte stabile)"
+                  normativo="Art. 80 c. 1 CCNL 2022"
+                  value={sommeNonUtilizzate}
+                  onChange={setSommeNonUtilizzate}
+                  tooltip="Economie degli anni precedenti della parte stabile"
+                />
+
+                <TooltipInput
+                  id="imu-tari"
+                  label="Incentivi legati alla riscossione degli accertamenti IMU e TARI."
+                  normativo="Legge 145 del 30.12.2018 art. 1 c. 1091"
+                  value={incentiviIMUTARI}
+                  onChange={setIncentiviIMUTARI}
+                  tooltip="Incentivi per attività di riscossione tributi locali"
+                />
+
+                <TooltipInput
+                  id="pasto"
+                  label="Risparmi certificati sui buoni pasto non erogati anno 2020."
+                  normativo="Legge 178/2020 art. 1 c. 870"
+                  value={risparmiPasto}
+                  onChange={setRisparmiPasto}
+                  tooltip="Risparmi specifici sui buoni pasto non erogati nel 2020"
+                />
+
+                <TooltipInput
+                  id="assunzioni"
+                  label="Risorse accessorie eventuali per le assunzioni finanziate in deroga."
+                  normativo="Dl 135/2018 art. 11 c. 1 lett. b)"
+                  value={risorseAssunzioni}
+                  onChange={setRisorseAssunzioni}
+                  tooltip="Risorse per assunzioni in deroga ai vincoli"
+                />
+
+                <TooltipInput
+                  id="fondo-022"
+                  label="0,22% del monte salari anno 2018 con decorrenza dal 01.01.2022, quota d'incremento del fondo proporzionale."
+                  normativo="Art. 79 c. 3 CCNL 2022"
+                  value={incrementoFondo022}
+                  onChange={setIncrementoFondo022}
+                  tooltip="Incremento proporzionale basato sul monte salari 2018"
+                />
+
+                <TooltipInput
+                  id="tantum"
+                  label="Euro 84,50 per n. unità in servizio al 31.12.2018, quota una tantum annualità 2021 e 2022."
+                  normativo="Art. 79 c. 1 lett. b) CCNL 2022"
+                  value={euro84_50Tantum}
+                  onChange={setEuro84_50Tantum}
+                  tooltip="Quota una tantum per gli anni 2021 e 2022"
+                />
+
+                <TooltipInput
+                  id="fondo-2022"
+                  label="0,22% del monte salari anno 2018 con decorrenza dal 01.01.2022, quota d'incremento del fondo proporzionale, una tantum annualità 2022."
+                  normativo="Art. 79 c. 3 CCNL 2022"
+                  value={incrementoFondo2022}
+                  onChange={setIncrementoFondo2022}
+                  tooltip="Incremento una tantum per l'anno 2022"
+                />
+
+                <TooltipInput
+                  id="pnrr"
+                  label="Al fine di garantire maggiore efficienza ed efficacia dell'azione amministrativa in considerazione dei rilevanti impegni derivanti dall'attuazione dei progetti del PNRR e degli adempimenti connessi, per gli anni dal 2023 al 2026, gli enti locali che rispettano i requisiti di cui al comma 4 possono incrementare, oltre il limite di cui all'articolo 23, comma 2, del decreto legislativo 25 maggio 2017, n. 75, l'ammontare della componente variabile dei fondi per la contrattazione integrativa destinata al personale in servizio, anche di livello dirigenziale, in misura non superiore al 5 per cento della componente stabile di ciascuno dei fondi certificati nel 2016."
+                  normativo="DL 13/2023 art. 8 c. 3"
+                  value={incrementoPNRR}
+                  onChange={setIncrementoPNRR}
+                  tooltip="Incremento in deroga per progetti PNRR (2023-2026)"
+                />
+
+              </CardContent>
+            </Card>
+
+            {/* Altri Incrementi */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl text-purple-900">🔮 Altri Incrementi</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+
+                <TooltipInput
+                  id="deroga"
+                  label="Eventuale incremento salario accessorio in deroga realizzabile nell'anno."
+                  normativo="Art. 33 c. 2 dl 34/2019"
+                  value={incrementoSalarioDeroga}
+                  onChange={setIncrementoSalarioDeroga}
+                  tooltip="Incrementi in deroga autorizzati per l'anno corrente"
+                />
+
+                <TooltipInput
+                  id="vincoli"
+                  label="Misure conseguenti al mancato rispetto di vincoli finanziari posti alla contrattazione integrativa e all'utilizzo dei relativi fondi"
+                  normativo="Art. 4 DL 16/2014"
+                  value={misureVincoli}
+                  onChange={setMisureVincoli}
+                  tooltip="Misure correttive per mancato rispetto vincoli finanziari"
+                />
+
+              </CardContent>
+            </Card>
+
           </div>
 
           {/* SEZIONE RISULTATI */}
           <div className="space-y-6">
             
-            {/* Risorse Escluse Results */}
-            <Card className="border-blue-300">
+            {/* Riepilogo Calcoli */}
+            <Card className="border-2 border-blue-400">
               <CardHeader>
-                <CardTitle className="text-xl text-blue-900">🔵 RISORSE ESCLUSE DAL LIMITE</CardTitle>
+                <CardTitle className="text-xl text-blue-900">📊 RIEPILOGO CALCOLI</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-gray-600 pb-2 border-b">
-                    <div>DESCRIZIONE</div>
-                    <div>RIFERIMENTO NORMATIVO</div>
-                    <div className="text-right">IMPORTO</div>
-                    <div className="text-center">LIMITE ART. 23</div>
-                  </div>
-                  
-                  <ResultRow 
-                    description="Specifici disposizioni di legge"
-                    reference="Varie disposizioni"
-                    amount={risultati.escluse.specificiDisposizioni}
-                    isExcluded={true}
-                  />
-                  <ResultRow 
-                    description="Contributi enti terzi per progetti"
-                    reference="Art. 79, c. 2"
-                    amount={risultati.escluse.contributiEntiTerzi}
-                    isExcluded={true}
-                  />
-                  <ResultRow 
-                    description="Perfezionamento professionale"
-                    reference="Art. 79, c. 2"
-                    amount={risultati.escluse.perfezioneProfessionale}
-                    isExcluded={true}
-                  />
-                  <ResultRow 
-                    description="Trasferimento di personale"
-                    reference="Art. 79, c. 2"
-                    amount={risultati.escluse.trasferimenti}
-                    isExcluded={true}
-                  />
-                  <ResultRow 
-                    description="Risorse integrative L. 125/2013"
-                    reference="L. 125/2013"
-                    amount={risultati.escluse.integrative}
-                    isExcluded={true}
-                  />
-                  <ResultRow 
-                    description="Risorse Segreteria"
-                    reference="Art. 79, c. 2"
-                    amount={risultati.escluse.segreteria}
-                    isExcluded={true}
-                  />
-                  <ResultRow 
-                    description="Incentivazioni 2018"
-                    reference="Pregresse disposizioni"
-                    amount={risultati.escluse.incentivazioni}
-                    isExcluded={true}
-                  />
-                  <ResultRow 
-                    description="TOTALE RISORSE ESCLUSE"
-                    reference=""
-                    amount={risultati.escluse.totale}
-                    isTotal={true}
-                    isExcluded={true}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Incrementi Soggetti al Limite Results */}
-            <Card className="border-green-300">
-              <CardHeader>
-                <CardTitle className="text-xl text-green-900">🟢 INCREMENTI SOGGETTI AL LIMITE</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-gray-600 pb-2 border-b">
-                    <div>DESCRIZIONE</div>
-                    <div>RIFERIMENTO NORMATIVO</div>
-                    <div className="text-right">IMPORTO</div>
-                    <div className="text-center">LIMITE ART. 23</div>
-                  </div>
-                  
-                  <ResultRow 
-                    description="Incrementi CCNL 2018"
-                    reference="Art. 79, c. 2"
-                    amount={risultati.incrementiSoggetti.ccnl2018}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Incrementi CCNL 2022"
-                    reference="Art. 79, c. 2"
-                    amount={risultati.incrementiSoggetti.ccnl2022}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Incremento limite decentrato"
-                    reference="Art. 80"
-                    amount={risultati.incrementiSoggetti.limiteDecentrato}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="TOTALE INCREMENTI SOGGETTI AL LIMITE"
-                    reference=""
-                    amount={risultati.incrementiSoggetti.totale}
-                    isTotal={true}
-                    isExcluded={false}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Parte Stabile Results */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl text-green-900">A) PARTE STABILE</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-gray-600 pb-2 border-b">
-                    <div>DESCRIZIONE</div>
-                    <div>RIFERIMENTO NORMATIVO</div>
-                    <div className="text-right">IMPORTO</div>
-                    <div className="text-center">LIMITE ART. 23</div>
-                  </div>
-                  
-                  <ResultRow 
-                    description="Valore consolidato al 31.12 dell'anno precedente"
-                    reference="Art. 79, c. 1, lett. a)"
-                    amount={risultati.soggette.valoreConsolidato}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Incrementi da CCNL precedenti"
-                    reference="Art. 79, c. 1, lett. b)"
-                    amount={risultati.soggette.incrementiCCNL}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Assegni ad personam non riassorbibili"
-                    reference="Art. 79, c. 1, lett. c)"
-                    amount={risultati.soggette.assegniAdPersonam}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Risorse stabili da cessazioni"
-                    reference="Art. 79, c. 1, lett. d)"
-                    amount={risultati.soggette.risorseCessazioni}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="TOTALE PARTE STABILE"
-                    reference=""
-                    amount={risultati.soggette.totale}
-                    isTotal={true}
-                    isExcluded={false}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Parte Variabile Results */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl text-orange-900">B) PARTE VARIABILE</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-gray-600 pb-2 border-b">
-                    <div>DESCRIZIONE</div>
-                    <div>RIFERIMENTO NORMATIVO</div>
-                    <div className="text-right">IMPORTO</div>
-                    <div className="text-center">LIMITE ART. 23</div>
-                  </div>
-                  
-                  <ResultRow 
-                    description="Economie fondo anno precedente"
-                    reference="Art. 79, c. 2, lett. a)"
-                    amount={risultati.variabili.economie}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Risorse per attivazione nuovi servizi"
-                    reference="Art. 79, c. 2, lett. b)"
-                    amount={risultati.variabili.nuoviServizi}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Proventi da sponsorizzazioni"
-                    reference="Art. 79, c. 2, lett. c)"
-                    amount={risultati.variabili.sponsorizzazioni}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Contributi da enti terzi (UE, Stato, Regioni)"
-                    reference="Art. 79, c. 2, lett. d)"
-                    amount={risultati.variabili.entiTerzi}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Risorse da recupero evasione ICI/IMU/TARI"
-                    reference="Art. 79, c. 2, lett. e)"
-                    amount={risultati.variabili.recuperoEvasione}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Proventi da diritti di segreteria e rogito"
-                    reference="Art. 79, c. 2, lett. f)"
-                    amount={risultati.variabili.dirittiSegreteria}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Risorse per personale L. 125/2013"
-                    reference="Art. 79, c. 2, lett. g)"
-                    amount={risultati.variabili.risorseL125}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Proventi da condoni edilizi"
-                    reference="Art. 79, c. 2, lett. h)"
-                    amount={risultati.variabili.condoniEdilizi}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Specifiche disposizioni di legge"
-                    reference="Art. 79, c. 2, lett. i)"
-                    amount={risultati.variabili.specificheDisp}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Risorse da performance organizzativa"
-                    reference="Art. 79, c. 2, lett. l)"
-                    amount={risultati.variabili.performanceOrg}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Risorse L. 145/2018 (c. 1091)"
-                    reference="Art. 79, c. 2, lett. m)"
-                    amount={risultati.variabili.risorseL145}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="TOTALE PARTE VARIABILE"
-                    reference=""
-                    amount={risultati.variabili.totale}
-                    isTotal={true}
-                    isExcluded={false}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Incrementi CCNL Results */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl text-blue-900">C) INCREMENTI CCNL 16.11.2022</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-1">
-                  <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-gray-600 pb-2 border-b">
-                    <div>DESCRIZIONE</div>
-                    <div>RIFERIMENTO NORMATIVO</div>
-                    <div className="text-right">IMPORTO</div>
-                    <div className="text-center">LIMITE ART. 23</div>
-                  </div>
-                  
-                  <ResultRow 
-                    description="Incremento per il personale in servizio"
-                    reference="Art. 80, c. 1"
-                    amount={risultati.incrementi.incrementoPersonale}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Incremento su Monte Salari 2018 (0,22%)"
-                    reference="Art. 80, c. 2"
-                    amount={risultati.incrementi.incrementoMonteSalari}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Risorse per progressioni tra aree"
-                    reference="Artt. 15 e 80, c. 3"
-                    amount={risultati.incrementi.progressioni}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Efficientamento servizi"
-                    reference="Art. 80, c. 4"
-                    amount={risultati.incrementi.efficientamento}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Flessione orario di lavoro"
-                    reference="Art. 80, c. 5"
-                    amount={risultati.incrementi.flessione}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="Altre risorse per incremento"
-                    reference="Art. 80, c. 6"
-                    amount={risultati.incrementi.altreRisorse}
-                    isExcluded={false}
-                  />
-                  <ResultRow 
-                    description="TOTALE INCREMENTI CCNL"
-                    reference=""
-                    amount={risultati.incrementi.totale}
-                    isTotal={true}
-                    isExcluded={false}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Riepilogo e Verifica Limiti */}
-            <Card className="border-2 border-gray-400">
-              <CardHeader>
-                <CardTitle className="text-xl text-purple-900">🎯 RIEPILOGO E VERIFICA LIMITI</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold">Totale Fondo Anno {annoRiferimento} (tutte le voci):</span>
-                      <span className="text-2xl font-bold text-blue-900 font-mono">
-                        {formatCurrency(risultati.totaleFondo)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-orange-50 p-4 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold">Totale soggetto al limite Art. 23 D.Lgs. 75/2017:</span>
-                      <span className="text-2xl font-bold text-orange-900 font-mono">
-                        {formatCurrency(risultati.totaleArt23)}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Limite di spesa (Tetto 2016) - Art. 23, c. 2, D.Lgs. 75/2017:</span>
-                      <span className="text-lg font-semibold font-mono">
-                        {formatCurrency(risultati.limiteTetto)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className={`p-4 rounded-lg border-2 ${
-                    risultati.rispettaLimite 
-                      ? 'bg-green-50 border-green-300' 
-                      : 'bg-red-50 border-red-300'
-                  }`}>
-                    <div className="text-center">
-                      <div className={`text-2xl font-bold mb-2 ${
-                        risultati.rispettaLimite ? 'text-green-700' : 'text-red-700'
-                      }`}>
-                        {risultati.rispettaLimite ? '✅ LIMITE RISPETTATO' : '❌ LIMITE SFORATO'}
-                      </div>
-                      
-                      {risultati.rispettaLimite ? (
-                        <div>
-                          <p className="text-green-700 font-semibold">
-                            Disponibilità residua: {formatCurrency(risultati.disponibilita)}
-                          </p>
-                        </div>
-                      ) : (
-                        <div>
-                          <p className="text-red-700 font-semibold">
-                            Sforamento: {formatCurrency(risultati.sforamento)}
-                          </p>
-                        </div>
-                      )}
-                    </div>
+              <CardContent className="space-y-4">
+                
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">SOMMA RISORSE STABILI:</span>
+                    <span className="text-xl font-bold text-blue-900 font-mono">
+                      {formatCurrency(risultati.sommaStabili)}
+                    </span>
                   </div>
                 </div>
+
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">SOMMA RISORSE VARIABILI SOGGETTE AL LIMITE:</span>
+                    <span className="text-xl font-bold text-orange-900 font-mono">
+                      {formatCurrency(risultati.sommaVariabiliSoggette)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-yellow-50 p-4 rounded-lg border-2 border-yellow-300">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">Totale parziale risorse disponibili per il fondo anno corrente:</span>
+                    <span className="text-xl font-bold text-yellow-900 font-mono">
+                      {formatCurrency(risultati.totaleParziale)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Tetto complessivo salario accessorio 2016:</span>
+                    <span className="text-lg font-semibold font-mono">
+                      {formatCurrency(limiteComplessivo2016)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className={`p-4 rounded-lg border-2 ${
+                  risultati.decurtazioneIncremento > 0 
+                    ? 'bg-red-50 border-red-300' 
+                    : 'bg-green-50 border-green-300'
+                }`}>
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">
+                      {risultati.decurtazioneIncremento > 0 ? 'SFORAMENTO' : 'DISPONIBILITÀ'}:
+                    </span>
+                    <span className={`text-xl font-bold font-mono ${
+                      risultati.decurtazioneIncremento > 0 ? 'text-red-700' : 'text-green-700'
+                    }`}>
+                      {formatCurrency(Math.abs(risultati.totaleParziale - limiteComplessivo2016))}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">SOMMA RISORSE VARIABILI NON SOGGETTE AL LIMITE:</span>
+                    <span className="text-xl font-bold text-green-900 font-mono">
+                      {formatCurrency(risultati.sommaVariabiliNonSoggette)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-300">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold">TOTALE RISORSE EFFETTIVAMENTE DISPONIBILI:</span>
+                    <span className="text-2xl font-bold text-purple-900 font-mono">
+                      {formatCurrency(risultati.totaleRisorse)}
+                    </span>
+                  </div>
+                </div>
+
               </CardContent>
             </Card>
 
@@ -1208,8 +682,7 @@ const Index = () => {
 
         {/* Footer */}
         <div className="text-center text-xs text-gray-500 bg-white p-4 rounded-lg">
-          <p>Applicazione per il calcolo completo del Fondo Risorse Decentrate secondo il CCNL Funzioni Locali del 16.11.2022</p>
-          <p>Include distinzione tra voci soggette ed escluse dal limite dell'art. 23, c. 2, D.Lgs. 75/2017</p>
+          <p>Calcolo Fondo Risorse Decentrate secondo la struttura normativa del CCNL Funzioni Locali</p>
         </div>
 
       </div>

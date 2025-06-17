@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -209,6 +208,7 @@ const FondoPersonaleDipendente = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 1 Alte professionalità 0,20% monte salari 2001
+                    <span className="block text-xs text-gray-500 mt-1">(da inserire se non già compreso nella prima voce)</span>
                   </label>
                   <Input
                     type="number"
@@ -244,7 +244,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 79 c. 1 CCNL 2022. Art. 4 del CCNL 2001 c. 2 lett. c) Integrazione risorse
+                    Art. 79 c. 1 CCNL 2022. Art. 4 del CCNL 2001 c. 2 lett. c) RIA personale cessato l'anno precedente
                   </label>
                   <Input
                     type="number"
@@ -256,7 +256,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 2 lett. d) Eventuali risorse riassorbite
+                    Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 2 lett. d) Trattamenti economici più favorevoli in godimento
                   </label>
                   <Input
                     type="number"

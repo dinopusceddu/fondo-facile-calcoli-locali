@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,8 +66,8 @@ const FondoPersonaleDipendente = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Calcolo delle somme
-    const sommaRisorseStabili = [
+    // Calcolo delle somme - Risorse Stabili da SOMMARE
+    const risorseStabiliPositive = [
       parseFloat(unicoImportoFondo) || 0,
       parseFloat(alteProfessionalita) || 0,
       parseFloat(incremento83) || 0,
@@ -76,14 +77,21 @@ const FondoPersonaleDipendente = () => {
       parseFloat(sommeConnesse) || 0,
       parseFloat(quotaMinori) || 0,
       parseFloat(riduzioneStabile) || 0,
-      parseFloat(tagliofondo) || 0,
-      parseFloat(riduzioniATA) || 0,
-      parseFloat(decurtazioneFondo) || 0,
       parseFloat(euro84Unita) || 0,
       parseFloat(risorseStanziate) || 0,
       parseFloat(differenzialiStipendiali2022) || 0,
       parseFloat(differenzialiB3D3) || 0
     ].reduce((sum, val) => sum + val, 0);
+
+    // Risorse Stabili da SOTTRARRE (riduzioni del fondo)
+    const risorseStabiliNegative = [
+      parseFloat(tagliofondo) || 0,
+      parseFloat(riduzioniATA) || 0,
+      parseFloat(decurtazioneFondo) || 0
+    ].reduce((sum, val) => sum + val, 0);
+
+    // Calcolo finale delle risorse stabili
+    const sommaRisorseStabili = risorseStabiliPositive - risorseStabiliNegative;
 
     const sommaRisorseVariabiliSoggette = [
       parseFloat(risorseEvasione) || 0,

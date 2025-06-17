@@ -1,4 +1,5 @@
 
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -407,7 +408,7 @@ const FondoPersonaleDipendente = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 4 del CCNL del 5/10/2001 c. 3) Risorse derivanti dalla applicazione dell'art. 3
+                    Art. 4 del CCNL del 5/10/2001 c. 3) Recupero evasione ICI
                   </label>
                   <Input
                     type="number"
@@ -419,7 +420,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 4 del CCNL 5/10/2001 c. 2 Integrazione risorse dell'importo mensile residuo
+                    Art. 4 del CCNL 5/10/2001 c. 2 RIA anno in corso
                   </label>
                   <Input
                     type="number"
@@ -443,7 +444,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 79 c. 2 lett. b) CCNL 2022 Un importo massimo corrispondente all'1,2 %
+                    Art. 79 c. 2 lett. b) CCNL 2022 1,2 % MS 1997
                   </label>
                   <Input
                     type="number"
@@ -455,7 +456,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 67 del CCNL del 21.05.2018 c. 3 lett. k) Integrazione all'art. 62
+                    Art. 67 del CCNL del 21.05.2018 c. 3 lett. k) Risorse personale trasferito per delega di funzioni
                   </label>
                   <Input
                     type="number"
@@ -467,7 +468,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 79 c. 2 lett. c) CCNL 2022 Risorse finalizzate ad adeguare le disponibilità del Fondo
+                    Art. 79 c. 2 lett. c) CCNL 2022 Risorse incremento del Fondo
                   </label>
                   <Input
                     type="number"
@@ -812,3 +813,4 @@ const FondoPersonaleDipendente = () => {
 };
 
 export default FondoPersonaleDipendente;
+

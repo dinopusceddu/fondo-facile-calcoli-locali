@@ -7,10 +7,27 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { FileDown, Mail, FileText } from "lucide-react";
+import { FileDown, Mail, FileText, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const ElevateQualificazioni = () => {
+// Dati di fallback per i comuni lombardi
+const comuniDataGlobalSample = [
+  { nome: "Milano", provincia: "MI", regione: "Lombardia", num_residenti: 1396059 },
+  { nome: "Brescia", provincia: "BS", regione: "Lombardia", num_residenti: 196745 },
+  { nome: "Bergamo", provincia: "BG", regione: "Lombardia", num_residenti: 122476 },
+  { nome: "Monza", provincia: "MB", regione: "Lombardia", num_residenti: 123598 },
+  { nome: "Como", provincia: "CO", regione: "Lombardia", num_residenti: 83320 },
+  { nome: "Varese", provincia: "VA", regione: "Lombardia", num_residenti: 80511 },
+  { nome: "Cremona", provincia: "CR", regione: "Lombardia", num_residenti: 72077 },
+  { nome: "Pavia", provincia: "PV", regione: "Lombardia", num_residenti: 73086 },
+  { nome: "Mantova", provincia: "MN", regione: "Lombardia", num_residenti: 49490 },
+  { nome: "Lecco", provincia: "LC", regione: "Lombardia", num_residenti: 48131 },
+  { nome: "Lodi", provincia: "LO", regione: "Lombardia", num_residenti: 45863 },
+  { nome: "Sondrio", provincia: "SO", regione: "Lombardia", num_residenti: 21876 }
+];
+
+const IncrementoDLPA = () => {
   const navigate = useNavigate();
   
   // Dati dell'ente
@@ -39,54 +56,100 @@ const ElevateQualificazioni = () => {
   const [risultatiCalcolo, setRisultatiCalcolo] = useState<any>(null);
   const [datiPerReport, setDatiPerReport] = useState<any>(null);
 
-  // Dati comuni (simulati per ora)
-  const [province, setProvince] = useState<string[]>([]);
+  // Dati comuni
   const [comuni, setComuni] = useState<any[]>([]);
+  const [province, setProvince] = useState<string[]>([]);
   const [comuniFiltrati, setComuniFiltrati] = useState<any[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [usingFallbackData, setUsingFallbackData] = useState(false);
 
+  // Funzione per calcolare la soglia secondo DM 17/03/2020
+  const getSogliaPercentualeDL34 = (abitanti: number): number => {
+    if (abitanti <= 999) return 29.50;
+    if (abitanti <= 1999) return 28.60;
+    if (abitanti <= 2999) return 27.60;
+    if (abitanti <= 4999) return 27.20;
+    if (abitanti <= 9999) return 26.90;
+    if (abitanti <= 59999) return 27.00;
+    if (abitanti <= 249999) return 27.60;
+    if (abitanti <= 1499999) return 28.80;
+    return 25.30; // 1.500.000 abitanti in su
+  };
+
+  // Caricamento dati comuni all'avvio
   useEffect(() => {
-    // Simulazione caricamento dati comuni
-    const provinceSimulate = ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e Brianza", "Pavia", "Sondrio", "Varese"];
-    setProvince(provinceSimulate);
-    
-    const comuniSimulati = [
-      { nome: "Milano", provincia: "Milano", num_residenti: 1396059 },
-      { nome: "Brescia", provincia: "Brescia", num_residenti: 196745 },
-      { nome: "Bergamo", provincia: "Bergamo", num_residenti: 122476 },
-      { nome: "Monza", provincia: "Monza e Brianza", num_residenti: 123598 },
-      { nome: "Como", provincia: "Como", num_residenti: 83320 }
-    ];
-    setComuni(comuniSimulati);
+    const loadComuniData = async () => {
+      try {
+        setIsLoadingData(true);
+        console.log("Tentativo di caricamento dati da GitHub...");
+        
+        const response = await fetch('https://dinopusceddu.github.io/comunilombardi/italy_cities.json');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("Dati caricati da GitHub con successo");
+        
+        // Filtra solo i comuni della Lombardia
+        const comuniLombardia = data.filter((comune: any) => comune.regione === "Lombardia");
+        setComuni(comuniLombardia);
+        setUsingFallbackData(false);
+        
+      } catch (error) {
+        console.error("Errore nel caricamento dei dati da GitHub:", error);
+        console.log("Utilizzo dei dati di fallback locali");
+        
+        // Usa i dati di fallback
+        setComuni(comuniDataGlobalSample);
+        setUsingFallbackData(true);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    loadComuniData();
   }, []);
 
+  // Popolamento dinamico delle province
   useEffect(() => {
-    if (provincia) {
-      const filtrati = comuni.filter(c => c.provincia === provincia);
+    if (comuni.length > 0) {
+      // Crea elenco univoco delle province
+      const provinceUniche = [...new Set(comuni.map(c => c.provincia))].sort();
+      setProvince(provinceUniche);
+      console.log("Province caricate:", provinceUniche);
+    }
+  }, [comuni]);
+
+  // Filtraggio comuni per provincia selezionata
+  useEffect(() => {
+    if (provincia && comuni.length > 0) {
+      const filtrati = comuni.filter(c => c.provincia === provincia).sort((a, b) => a.nome.localeCompare(b.nome));
       setComuniFiltrati(filtrati);
+      console.log(`Comuni filtrati per provincia ${provincia}:`, filtrati.length);
+    } else {
+      setComuniFiltrati([]);
     }
   }, [provincia, comuni]);
 
-  useEffect(() => {
-    if (numeroAbitanti > 0) {
-      // Calcolo soglia % spesa personale basata sul numero abitanti
-      let soglia = 0;
-      if (numeroAbitanti <= 1000) soglia = 75;
-      else if (numeroAbitanti <= 3000) soglia = 65;
-      else if (numeroAbitanti <= 5000) soglia = 60;
-      else if (numeroAbitanti <= 10000) soglia = 55;
-      else if (numeroAbitanti <= 59999) soglia = 50;
-      else soglia = 40;
-      
-      setSogliaSpesaPersonale(soglia);
-    }
-  }, [numeroAbitanti]);
-
+  // Gestione selezione comune
   const handleComuneChange = (nomeComune: string) => {
     setComune(nomeComune);
     const comuneSelezionato = comuniFiltrati.find(c => c.nome === nomeComune);
+    
     if (comuneSelezionato) {
+      console.log("Comune selezionato:", comuneSelezionato);
+      
+      // Compila automaticamente i campi
       setDenominazioneEnte(comuneSelezionato.nome);
       setNumeroAbitanti(comuneSelezionato.num_residenti);
+      
+      // Calcola la soglia secondo DM 17/03/2020
+      const soglia = getSogliaPercentualeDL34(comuneSelezionato.num_residenti);
+      setSogliaSpesaPersonale(soglia);
+      
+      console.log(`Soglia calcolata per ${comuneSelezionato.num_residenti} abitanti: ${soglia}%`);
     }
   };
 
@@ -243,6 +306,25 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
           </Button>
         </div>
 
+        {/* Alert per dati di fallback */}
+        {usingFallbackData && (
+          <Alert className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Attenzione: Si stanno utilizzando dati di esempio. Non è stato possibile caricare l'elenco completo dei comuni.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Loading indicator */}
+        {isLoadingData && (
+          <Alert className="mb-6">
+            <AlertDescription>
+              Caricamento dati comuni in corso...
+            </AlertDescription>
+          </Alert>
+        )}
+
         <form onSubmit={procediConCalcolo} className="space-y-8">
           {/* Informazioni Ente */}
           <Card>
@@ -253,9 +335,9 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="provincia">Seleziona Provincia</Label>
-                  <Select value={provincia} onValueChange={setProvincia}>
+                  <Select value={provincia} onValueChange={setProvincia} disabled={isLoadingData}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Seleziona una provincia" />
+                      <SelectValue placeholder={isLoadingData ? "Caricamento..." : "Seleziona una provincia"} />
                     </SelectTrigger>
                     <SelectContent>
                       {province.map((prov) => (
@@ -267,7 +349,7 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
                 
                 <div className="space-y-2">
                   <Label htmlFor="comune">Seleziona Comune</Label>
-                  <Select value={comune} onValueChange={handleComuneChange} disabled={!provincia}>
+                  <Select value={comune} onValueChange={handleComuneChange} disabled={!provincia || isLoadingData}>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleziona un comune" />
                     </SelectTrigger>
@@ -304,10 +386,10 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="sogliaSpesa">Soglia % Spesa Personale / Entrate Correnti</Label>
+                <Label htmlFor="sogliaSpesa">Soglia % Spesa Personale / Entrate Correnti (DM 17/03/2020)</Label>
                 <Input
                   id="sogliaSpesa"
-                  value={`${sogliaSpesaPersonale}%`}
+                  value={sogliaSpesaPersonale ? `${sogliaSpesaPersonale}%` : ''}
                   readOnly
                   className="bg-gray-100"
                 />
@@ -544,4 +626,4 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
   );
 };
 
-export default ElevateQualificazioni;
+export default IncrementoDLPA;

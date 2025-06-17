@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, FileText, Download, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -35,10 +35,6 @@ const FondoPersonaleDipendente = () => {
   const [integrazioneArt62, setIntegrazioneArt62] = useState("");
   const [risorseAdeguamento, setRisorseAdeguamento] = useState("");
 
-  // Calcolo Rispetto Limiti
-  const [totaleRisorse, setTotaleRisorse] = useState("");
-  const [decurtazioneIncremento, setDecurtazioneIncremento] = useState("");
-
   // Risorse Variabili Non Soggette al Limite
   const [sommeDerivanti, setSommeDerivanti] = useState("");
   const [quotaRimborso, setQuotaRimborso] = useState("");
@@ -61,63 +57,6 @@ const FondoPersonaleDipendente = () => {
   const [misureVincoli, setMisureVincoli] = useState("");
 
   const [results, setResults] = useState<any>(null);
-
-  // Calcolo automatico del totale parziale risorse
-  useEffect(() => {
-    // Calcolo delle risorse stabili DA INCLUDERE (escludendo le 5 voci specificate)
-    const risorseStabiliDaIncludere = [
-      parseFloat(unicoImportoFondo) || 0,
-      parseFloat(alteProfessionalita) || 0,
-      parseFloat(integrazioneRisorse) || 0,
-      parseFloat(risorseRiassorbite) || 0,
-      parseFloat(sommeConnesse) || 0,
-      parseFloat(quotaMinori) || 0,
-      parseFloat(riduzioneStabile) || 0,
-      parseFloat(risorseStanziate) || 0
-      // ESCLUSE: incremento83, incrementiStipendiali, euro84Unita, differenzialiStipendiali2022, differenzialiB3D3
-    ].reduce((sum, val) => sum + val, 0);
-
-    // Le 3 riduzioni del fondo da sottrarre
-    const riduzioniDelFondo = [
-      parseFloat(tagliofondo) || 0,
-      parseFloat(riduzioniATA) || 0,
-      parseFloat(decurtazioneFondo) || 0
-    ].reduce((sum, val) => sum + val, 0);
-
-    // Tutte le risorse variabili soggette al limite
-    const risorseVariabiliSoggette = [
-      parseFloat(risorseEvasione) || 0,
-      parseFloat(integrazioneRisorseVariabili) || 0,
-      parseFloat(risorseCaseGioco) || 0,
-      parseFloat(importoMassimo12) || 0,
-      parseFloat(integrazioneArt62) || 0,
-      parseFloat(risorseAdeguamento) || 0
-    ].reduce((sum, val) => sum + val, 0);
-
-    // Calcolo del totale parziale secondo art. 23 c. 2 d.lgs. 75/2017
-    const totaleParzialeCalcolato = risorseStabiliDaIncludere + risorseVariabiliSoggette - riduzioniDelFondo;
-
-    setTotaleRisorse(totaleParzialeCalcolato.toFixed(2));
-  }, [
-    unicoImportoFondo,
-    alteProfessionalita,
-    integrazioneRisorse,
-    risorseRiassorbite,
-    sommeConnesse,
-    quotaMinori,
-    riduzioneStabile,
-    risorseStanziate,
-    tagliofondo,
-    riduzioniATA,
-    decurtazioneFondo,
-    risorseEvasione,
-    integrazioneRisorseVariabili,
-    risorseCaseGioco,
-    importoMassimo12,
-    integrazioneArt62,
-    risorseAdeguamento
-    // NON incluse nel dependency array: incremento83, incrementiStipendiali, euro84Unita, differenzialiStipendiali2022, differenzialiB3D3
-  ]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,8 +97,27 @@ const FondoPersonaleDipendente = () => {
       parseFloat(risorseAdeguamento) || 0
     ].reduce((sum, val) => sum + val, 0);
 
-    const totaleParzialeRisorse = parseFloat(totaleRisorse) || 0;
-    const decurtazione = parseFloat(decurtazioneIncremento) || 0;
+    // Calcolo delle risorse stabili DA INCLUDERE (escludendo le 5 voci specificate)
+    const risorseStabiliDaIncludere = [
+      parseFloat(unicoImportoFondo) || 0,
+      parseFloat(alteProfessionalita) || 0,
+      parseFloat(integrazioneRisorse) || 0,
+      parseFloat(risorseRiassorbite) || 0,
+      parseFloat(sommeConnesse) || 0,
+      parseFloat(quotaMinori) || 0,
+      parseFloat(riduzioneStabile) || 0,
+      parseFloat(risorseStanziate) || 0
+    ].reduce((sum, val) => sum + val, 0);
+
+    // Le 3 riduzioni del fondo da sottrarre
+    const riduzioniDelFondo = [
+      parseFloat(tagliofondo) || 0,
+      parseFloat(riduzioniATA) || 0,
+      parseFloat(decurtazioneFondo) || 0
+    ].reduce((sum, val) => sum + val, 0);
+
+    // Calcolo del totale parziale secondo art. 23 c. 2 d.lgs. 75/2017
+    const totaleParzialeRisorse = risorseStabiliDaIncludere + sommaRisorseVariabiliSoggette - riduzioniDelFondo;
 
     const sommaRisorseVariabiliNonSoggette = [
       parseFloat(sommeDerivanti) || 0,
@@ -185,8 +143,6 @@ const FondoPersonaleDipendente = () => {
     const totaleRisorseEffettivamenteDisponibili = 
       sommaRisorseStabili + 
       sommaRisorseVariabiliSoggette + 
-      totaleParzialeRisorse + 
-      decurtazione + 
       sommaRisorseVariabiliNonSoggette + 
       incrementoSal + 
       misureVinc;
@@ -195,7 +151,6 @@ const FondoPersonaleDipendente = () => {
       sommaRisorseStabili,
       sommaRisorseVariabiliSoggette,
       totaleParzialeRisorse,
-      decurtazione,
       sommaRisorseVariabiliNonSoggette,
       incrementoSal,
       misureVinc,
@@ -537,43 +492,6 @@ const FondoPersonaleDipendente = () => {
             </CardContent>
           </Card>
 
-          {/* Calcolo Rispetto Limiti */}
-          <Card>
-            <CardHeader className="bg-orange-600 text-white">
-              <CardTitle>CALCOLO DEL RISPETTO DEI LIMITI DEL SALARIO ACCESSORIO</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Totale parziale risorse disponibili per il fondo anno corrente
-                    <span className="block text-xs text-gray-500 mt-1">(Calcolato automaticamente secondo art. 23 c. 2 d.lgs. 75/2017)</span>
-                  </label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={totaleRisorse}
-                    readOnly
-                    className="bg-gray-100"
-                    placeholder="€ 0,00"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Art. 23 c. 2 dlgs 75/2017 Eventuale decurtazione o incremento annuale
-                  </label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={decurtazioneIncremento}
-                    onChange={(e) => setDecurtazioneIncremento(e.target.value)}
-                    placeholder="€ 0,00"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Risorse Variabili Non Soggette al Limite */}
           <Card>
             <CardHeader className="bg-green-600 text-white">
@@ -832,13 +750,22 @@ const FondoPersonaleDipendente = () => {
                       € {results.sommaRisorseVariabiliSoggette.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
+                  <div className="bg-orange-50 p-4 rounded">
+                    <h3 className="font-bold text-orange-800 mb-2">TOTALE PARZIALE RISORSE PER IL FONDO</h3>
+                    <p className="text-2xl font-bold text-orange-600">
+                      € {results.totaleParzialeRisorse.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                    </p>
+                    <span className="text-xs text-gray-500">
+                      (secondo art. 23 c. 2 d.lgs. 75/2017)
+                    </span>
+                  </div>
                   <div className="bg-green-50 p-4 rounded">
                     <h3 className="font-bold text-green-800 mb-2">SOMMA RISORSE VARIABILI NON SOGGETTE AL LIMITE</h3>
                     <p className="text-2xl font-bold text-green-600">
                       € {results.sommaRisorseVariabiliNonSoggette.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
-                  <div className="bg-gray-800 text-white p-4 rounded">
+                  <div className="bg-gray-800 text-white p-4 rounded md:col-span-2">
                     <h3 className="font-bold mb-2">TOTALE RISORSE EFFETTIVAMENTE DISPONIBILI</h3>
                     <p className="text-3xl font-bold">
                       € {results.totaleRisorseEffettivamenteDisponibili.toLocaleString('it-IT', { minimumFractionDigits: 2 })}

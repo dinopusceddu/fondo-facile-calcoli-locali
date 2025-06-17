@@ -1,11 +1,9 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { FileDown, Mail, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -13,82 +11,23 @@ import { useNavigate } from "react-router-dom";
 const ElevateQualificazioni = () => {
   const navigate = useNavigate();
   
-  // Dati dell'ente
-  const [provincia, setProvincia] = useState("");
-  const [comune, setComune] = useState("");
-  const [denominazioneEnte, setDenominazioneEnte] = useState("");
-  const [numeroAbitanti, setNumeroAbitanti] = useState<number>(0);
-  const [sogliaSpesaPersonale, setSogliaSpesaPersonale] = useState<number>(0);
+  // Stati per risorse stabili
+  const [art17c2Retribuzione, setArt17c2Retribuzione] = useState<number>(0);
+  const [art17c3Retribuzione, setArt17c3Retribuzione] = useState<number>(0);
+  const [art17c5Interim, setArt17c5Interim] = useState<number>(0);
+  const [art23c5Maggiorazione, setArt23c5Maggiorazione] = useState<number>(0);
 
-  // Dati per calcolo
-  const [fontoStorico2016, setFontoStorico2016] = useState<number>(0);
-  const [incrementoAnnuale, setIncrementoAnnuale] = useState<number>(0);
-  const [spesePersonale2023, setSpesePersonale2023] = useState<number>(0);
-  const [entrateCorrenti2023, setEntrateCorrenti2023] = useState<number>(0);
+  // Stati per risorse variabili
+  const [art17c4Risultato, setArt17c4Risultato] = useState<number>(0);
+  const [art79c3Incremento, setArt79c3Incremento] = useState<number>(0);
 
-  // Dati per limiti spesa personale
-  const [limiteSpesaPersonale, setLimiteSpesaPersonale] = useState<number>(0);
-  const [mediaSpesa20112013, setMediaSpesa20112013] = useState<number>(0);
-  
-  // Verifiche normative
-  const [rispettoLimiti, setRispettoLimiti] = useState("si");
-  const [equilibrioBilancio, setEquilibrioBilancio] = useState("si");
-  const [pattoDiStabilita, setPattoDiStabilita] = useState("si");
+  // Stati per altri importi
+  const [art23c2Decurtazione, setArt23c2Decurtazione] = useState<number>(0);
+  const [art33c2IncrementoDerogaRealizzabile, setArt33c2IncrementoDerogaRealizzabile] = useState<number>(0);
 
-  // Risultati
+  // Risultati calcolati
   const [risultatiCalcolo, setRisultatiCalcolo] = useState<any>(null);
   const [datiPerReport, setDatiPerReport] = useState<any>(null);
-
-  // Dati comuni (simulati per ora)
-  const [province, setProvince] = useState<string[]>([]);
-  const [comuni, setComuni] = useState<any[]>([]);
-  const [comuniFiltrati, setComuniFiltrati] = useState<any[]>([]);
-
-  useEffect(() => {
-    // Simulazione caricamento dati comuni
-    const provinceSimulate = ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e Brianza", "Pavia", "Sondrio", "Varese"];
-    setProvince(provinceSimulate);
-    
-    const comuniSimulati = [
-      { nome: "Milano", provincia: "Milano", num_residenti: 1396059 },
-      { nome: "Brescia", provincia: "Brescia", num_residenti: 196745 },
-      { nome: "Bergamo", provincia: "Bergamo", num_residenti: 122476 },
-      { nome: "Monza", provincia: "Monza e Brianza", num_residenti: 123598 },
-      { nome: "Como", provincia: "Como", num_residenti: 83320 }
-    ];
-    setComuni(comuniSimulati);
-  }, []);
-
-  useEffect(() => {
-    if (provincia) {
-      const filtrati = comuni.filter(c => c.provincia === provincia);
-      setComuniFiltrati(filtrati);
-    }
-  }, [provincia, comuni]);
-
-  useEffect(() => {
-    if (numeroAbitanti > 0) {
-      // Calcolo soglia % spesa personale basata sul numero abitanti
-      let soglia = 0;
-      if (numeroAbitanti <= 1000) soglia = 75;
-      else if (numeroAbitanti <= 3000) soglia = 65;
-      else if (numeroAbitanti <= 5000) soglia = 60;
-      else if (numeroAbitanti <= 10000) soglia = 55;
-      else if (numeroAbitanti <= 59999) soglia = 50;
-      else soglia = 40;
-      
-      setSogliaSpesaPersonale(soglia);
-    }
-  }, [numeroAbitanti]);
-
-  const handleComuneChange = (nomeComune: string) => {
-    setComune(nomeComune);
-    const comuneSelezionato = comuniFiltrati.find(c => c.nome === nomeComune);
-    if (comuneSelezionato) {
-      setDenominazioneEnte(comuneSelezionato.nome);
-      setNumeroAbitanti(comuneSelezionato.num_residenti);
-    }
-  };
 
   const parseNumericValue = (value: string): number => {
     return parseFloat(value.replace(/,/g, '.').replace(/[^\d.-]/g, '')) || 0;
@@ -102,64 +41,38 @@ const ElevateQualificazioni = () => {
     }).format(value);
   };
 
-  const formatPercentage = (value: number): string => {
-    return `${value.toFixed(2)}%`;
-  };
-
   const procediConCalcolo = (event: React.FormEvent) => {
     event.preventDefault();
 
-    // FASE 1: Calcolo base incremento fondo
-    const incrementoBase = fontoStorico2016 * 0.05; // 5% del fondo storico 2016
+    // Calcolo somma risorse stabili
+    const sommaRisorseStabili = art17c2Retribuzione + art17c3Retribuzione + art17c5Interim + art23c5Maggiorazione;
     
-    // FASE 2: Calcolo incremento disponibile
-    const incrementoDisponibile = incrementoBase + incrementoAnnuale;
+    // Calcolo somma risorse variabili
+    const sommaRisorseVariabili = art17c4Risultato + art79c3Incremento;
     
-    // FASE 3: Verifica limiti spesa personale
-    const percentualeSpesePersonale = (spesePersonale2023 / entrateCorrenti2023) * 100;
-    const rispettaLimiti = percentualeSpesePersonale <= sogliaSpesaPersonale;
-    
-    // FASE 4: Calcolo incremento effettivo
-    let incrementoEffettivo = 0;
-    if (rispettaLimiti && rispettoLimiti === "si" && equilibrioBilancio === "si" && pattoDiStabilita === "si") {
-      incrementoEffettivo = incrementoDisponibile;
-    } else {
-      incrementoEffettivo = incrementoDisponibile * 0.5; // Riduzione del 50% se non rispetta tutti i criteri
-    }
-    
-    // FASE 5: Calcolo fondo finale
-    const fondoFinale = fontoStorico2016 + incrementoEffettivo;
+    // Calcolo totale risorse effettivamente disponibili
+    const totaleRisorseEffettive = sommaRisorseStabili + sommaRisorseVariabili + art23c2Decurtazione + art33c2IncrementoDerogaRealizzabile;
 
     const risultati = {
-      incrementoBase,
-      incrementoDisponibile,
-      percentualeSpesePersonale,
-      rispettaLimiti,
-      incrementoEffettivo,
-      fondoFinale,
-      risparmioPotenziale: incrementoEffettivo
+      sommaRisorseStabili,
+      sommaRisorseVariabili,
+      totaleRisorseEffettive
     };
 
     const dati = {
-      ente: {
-        denominazione: denominazioneEnte,
-        provincia,
-        comune,
-        abitanti: numeroAbitanti,
-        sogliaSpesa: sogliaSpesaPersonale
+      risorseStabili: {
+        art17c2Retribuzione,
+        art17c3Retribuzione,
+        art17c5Interim,
+        art23c5Maggiorazione
       },
-      calcoli: {
-        fontoStorico2016,
-        incrementoAnnuale,
-        spesePersonale2023,
-        entrateCorrenti2023,
-        limiteSpesaPersonale,
-        mediaSpesa20112013
+      risorseVariabili: {
+        art17c4Risultato,
+        art79c3Incremento
       },
-      verifiche: {
-        rispettoLimiti,
-        equilibrioBilancio,
-        pattoDiStabilita
+      altriImporti: {
+        art23c2Decurtazione,
+        art33c2IncrementoDerogaRealizzabile
       },
       risultati
     };
@@ -169,7 +82,6 @@ const ElevateQualificazioni = () => {
   };
 
   const generaReportPDF = () => {
-    // Implementazione generazione PDF con jsPDF
     console.log("Generazione PDF...", datiPerReport);
   };
 
@@ -178,12 +90,15 @@ const ElevateQualificazioni = () => {
     
     const csvContent = [
       "Campo;Valore",
-      `Denominazione Ente;${datiPerReport.ente.denominazione}`,
-      `Provincia;${datiPerReport.ente.provincia}`,
-      `Numero Abitanti;${datiPerReport.ente.abitanti}`,
-      `Fondo Storico 2016;${datiPerReport.calcoli.fontoStorico2016}`,
-      `Incremento Effettivo;${datiPerReport.risultati.incrementoEffettivo}`,
-      `Fondo Finale;${datiPerReport.risultati.fondoFinale}`
+      `Art. 17 c. 2 Retribuzione;${datiPerReport.risorseStabili.art17c2Retribuzione}`,
+      `Art. 17 c. 3 Retribuzione;${datiPerReport.risorseStabili.art17c3Retribuzione}`,
+      `Art. 17 c. 5 Interim;${datiPerReport.risorseStabili.art17c5Interim}`,
+      `Art. 23 c. 5 Maggiorazione;${datiPerReport.risorseStabili.art23c5Maggiorazione}`,
+      `Somma Risorse Stabili;${datiPerReport.risultati.sommaRisorseStabili}`,
+      `Art. 17 c. 4 Risultato;${datiPerReport.risorseVariabili.art17c4Risultato}`,
+      `Art. 79 c. 3 Incremento;${datiPerReport.risorseVariabili.art79c3Incremento}`,
+      `Somma Risorse Variabili;${datiPerReport.risultati.sommaRisorseVariabili}`,
+      `Totale Risorse Effettive;${datiPerReport.risultati.totaleRisorseEffettive}`
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -200,17 +115,23 @@ const ElevateQualificazioni = () => {
   const inviaEmail = () => {
     if (!datiPerReport) return;
     
-    const oggetto = encodeURIComponent("Simulazione Elevate Qualificazioni - " + datiPerReport.ente.denominazione);
+    const oggetto = encodeURIComponent("Simulazione Elevate Qualificazioni");
     const corpo = encodeURIComponent(`
 Simulazione Elevate Qualificazioni
 
-Ente: ${datiPerReport.ente.denominazione}
-Provincia: ${datiPerReport.ente.provincia}
-Abitanti: ${datiPerReport.ente.abitanti}
+Risorse Stabili:
+Art. 17 c. 2: ${formatCurrency(datiPerReport.risorseStabili.art17c2Retribuzione)}
+Art. 17 c. 3: ${formatCurrency(datiPerReport.risorseStabili.art17c3Retribuzione)}
+Art. 17 c. 5: ${formatCurrency(datiPerReport.risorseStabili.art17c5Interim)}
+Art. 23 c. 5: ${formatCurrency(datiPerReport.risorseStabili.art23c5Maggiorazione)}
+Somma Risorse Stabili: ${formatCurrency(datiPerReport.risultati.sommaRisorseStabili)}
 
-Fondo Storico 2016: ${formatCurrency(datiPerReport.calcoli.fontoStorico2016)}
-Incremento Effettivo: ${formatCurrency(datiPerReport.risultati.incrementoEffettivo)}
-Fondo Finale: ${formatCurrency(datiPerReport.risultati.fondoFinale)}
+Risorse Variabili:
+Art. 17 c. 4: ${formatCurrency(datiPerReport.risorseVariabili.art17c4Risultato)}
+Art. 79 c. 3: ${formatCurrency(datiPerReport.risorseVariabili.art79c3Incremento)}
+Somma Risorse Variabili: ${formatCurrency(datiPerReport.risultati.sommaRisorseVariabili)}
+
+Totale Risorse Effettivamente Disponibili: ${formatCurrency(datiPerReport.risultati.totaleRisorseEffettive)}
 
 Generato il ${new Date().toLocaleDateString('it-IT')}
     `);
@@ -229,10 +150,10 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Simulazione Incremento Fondo Elevate Qualificazioni
+            Simulazione Elevate Qualificazioni
           </h1>
           <p className="text-gray-600">
-            Calcolo basato su DL 25/2025, DM 17/03/2020, L. 296/06
+            Calcolo basato su CCNL del 16.11.2022
           </p>
           <Button
             onClick={() => navigate('/')}
@@ -244,215 +165,127 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
         </div>
 
         <form onSubmit={procediConCalcolo} className="space-y-8">
-          {/* Informazioni Ente */}
+          {/* Risorse Stabili */}
           <Card>
-            <CardHeader className="bg-red-600 text-white">
-              <CardTitle>Informazioni Ente</CardTitle>
+            <CardHeader className="bg-blue-600 text-white">
+              <CardTitle>Risorse Stabili</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="provincia">Seleziona Provincia</Label>
-                  <Select value={provincia} onValueChange={setProvincia}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleziona una provincia" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {province.map((prov) => (
-                        <SelectItem key={prov} value={prov}>{prov}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="comune">Seleziona Comune</Label>
-                  <Select value={comune} onValueChange={handleComuneChange} disabled={!provincia}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleziona un comune" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {comuniFiltrati.map((com) => (
-                        <SelectItem key={com.nome} value={com.nome}>{com.nome}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="denominazione">Denominazione dell'Ente</Label>
-                  <Input
-                    id="denominazione"
-                    value={denominazioneEnte}
-                    readOnly
-                    className="bg-gray-100"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="abitanti">Numero abitanti dell'Ente</Label>
-                  <Input
-                    id="abitanti"
-                    type="number"
-                    value={numeroAbitanti || ''}
-                    readOnly
-                    className="bg-gray-100"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="sogliaSpesa">Soglia % Spesa Personale / Entrate Correnti</Label>
-                <Input
-                  id="sogliaSpesa"
-                  value={`${sogliaSpesaPersonale}%`}
-                  readOnly
-                  className="bg-gray-100"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Dati per Calcolo */}
-          <Card>
-            <CardHeader className="bg-red-600 text-white">
-              <CardTitle>Dati per Calcolo</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fontoStorico">Fondo Storico 2016 (€)</Label>
-                  <Input
-                    id="fontoStorico"
-                    type="number"
-                    step="0.01"
-                    value={fontoStorico2016 || ''}
-                    onChange={(e) => setFontoStorico2016(parseNumericValue(e.target.value))}
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="incrementoAnnuale">Incremento Annuale (€)</Label>
-                  <Input
-                    id="incrementoAnnuale"
-                    type="number"
-                    step="0.01"
-                    value={incrementoAnnuale || ''}
-                    onChange={(e) => setIncrementoAnnuale(parseNumericValue(e.target.value))}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="spesePersonale">Spese Personale 2023 (€)</Label>
-                  <Input
-                    id="spesePersonale"
-                    type="number"
-                    step="0.01"
-                    value={spesePersonale2023 || ''}
-                    onChange={(e) => setSpesePersonale2023(parseNumericValue(e.target.value))}
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="entrateCorrenti">Entrate Correnti 2023 (€)</Label>
-                  <Input
-                    id="entrateCorrenti"
-                    type="number"
-                    step="0.01"
-                    value={entrateCorrenti2023 || ''}
-                    onChange={(e) => setEntrateCorrenti2023(parseNumericValue(e.target.value))}
-                    required
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Dati per Limiti Spesa Personale */}
-          <Card>
-            <CardHeader className="bg-red-600 text-white">
-              <CardTitle>Dati per Limiti Spesa Personale</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="limiteSpesa">Limite Spesa Personale (€)</Label>
-                  <Input
-                    id="limiteSpesa"
-                    type="number"
-                    step="0.01"
-                    value={limiteSpesaPersonale || ''}
-                    onChange={(e) => setLimiteSpesaPersonale(parseNumericValue(e.target.value))}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="mediaSpesa">Media Spesa 2011-2013 (€)</Label>
-                  <Input
-                    id="mediaSpesa"
-                    type="number"
-                    step="0.01"
-                    value={mediaSpesa20112013 || ''}
-                    onChange={(e) => setMediaSpesa20112013(parseNumericValue(e.target.value))}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Verifiche Normative */}
-          <Card>
-            <CardHeader className="bg-red-600 text-white">
-              <CardTitle>Verifiche Normative</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-6">
               <div className="space-y-4">
-                <div>
-                  <Label className="text-base font-medium">L'ente rispetta i limiti di spesa del personale?</Label>
-                  <RadioGroup value={rispettoLimiti} onValueChange={setRispettoLimiti} className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="si" id="limiti-si" />
-                      <Label htmlFor="limiti-si">Sì</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="limiti-no" />
-                      <Label htmlFor="limiti-no">No</Label>
-                    </div>
-                  </RadioGroup>
+                <div className="space-y-2">
+                  <Label htmlFor="art17c2">Art. 17 c. 2 CCNL del 16.11.2022 - Retribuzione di posizione (€ 5.000 - € 18.000)</Label>
+                  <Input
+                    id="art17c2"
+                    type="number"
+                    step="0.01"
+                    value={art17c2Retribuzione || ''}
+                    onChange={(e) => setArt17c2Retribuzione(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="art17c3">Art. 17 c. 3 CCNL del 16.11.2022 - Retribuzione di posizione (€ 3.000 - € 9.500)</Label>
+                  <Input
+                    id="art17c3"
+                    type="number"
+                    step="0.01"
+                    value={art17c3Retribuzione || ''}
+                    onChange={(e) => setArt17c3Retribuzione(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro"
+                  />
                 </div>
 
-                <div>
-                  <Label className="text-base font-medium">L'ente è in equilibrio di bilancio?</Label>
-                  <RadioGroup value={equilibrioBilancio} onValueChange={setEquilibrioBilancio} className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="si" id="equilibrio-si" />
-                      <Label htmlFor="equilibrio-si">Sì</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="equilibrio-no" />
-                      <Label htmlFor="equilibrio-no">No</Label>
-                    </div>
-                  </RadioGroup>
+                <div className="space-y-2">
+                  <Label htmlFor="art17c5">Art. 17 c. 5 CCNL del 16.11.2022 - Incarico ad interim (15%-25%)</Label>
+                  <Input
+                    id="art17c5"
+                    type="number"
+                    step="0.01"
+                    value={art17c5Interim || ''}
+                    onChange={(e) => setArt17c5Interim(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro"
+                  />
                 </div>
 
-                <div>
-                  <Label className="text-base font-medium">L'ente rispetta il patto di stabilità?</Label>
-                  <RadioGroup value={pattoDiStabilita} onValueChange={setPattoDiStabilita} className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="si" id="patto-si" />
-                      <Label htmlFor="patto-si">Sì</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="patto-no" />
-                      <Label htmlFor="patto-no">No</Label>
-                    </div>
-                  </RadioGroup>
+                <div className="space-y-2">
+                  <Label htmlFor="art23c5">Art. 23 c. 5 CCNL del 16.11.2022 - Maggiorazione per diverse sedi (max 30%)</Label>
+                  <Input
+                    id="art23c5"
+                    type="number"
+                    step="0.01"
+                    value={art23c5Maggiorazione || ''}
+                    onChange={(e) => setArt23c5Maggiorazione(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Risorse Variabili */}
+          <Card>
+            <CardHeader className="bg-green-600 text-white">
+              <CardTitle>Risorse Variabili</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="art17c4">Art. 17 c. 4 CCNL del 16.11.2022 - Retribuzione di risultato (min 15%)</Label>
+                  <Input
+                    id="art17c4"
+                    type="number"
+                    step="0.01"
+                    value={art17c4Risultato || ''}
+                    onChange={(e) => setArt17c4Risultato(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="art79c3">Art. 79 c. 3 CCNL 2022 - Incremento 0,22% monte salari 2018</Label>
+                  <Input
+                    id="art79c3"
+                    type="number"
+                    step="0.01"
+                    value={art79c3Incremento || ''}
+                    onChange={(e) => setArt79c3Incremento(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Altri Importi */}
+          <Card>
+            <CardHeader className="bg-orange-600 text-white">
+              <CardTitle>Altri Importi</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="art23c2">Art. 23 c. 2 dlgs 75/2017 - Eventuale decurtazione o incremento annuale</Label>
+                  <Input
+                    id="art23c2"
+                    type="number"
+                    step="0.01"
+                    value={art23c2Decurtazione || ''}
+                    onChange={(e) => setArt23c2Decurtazione(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro (positivo per incremento, negativo per decurtazione)"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="art33c2">Art. 33 c. 2 dl 34/2019 - Eventuale incremento salario accessorio in deroga</Label>
+                  <Input
+                    id="art33c2"
+                    type="number"
+                    step="0.01"
+                    value={art33c2IncrementoDerogaRealizzabile || ''}
+                    onChange={(e) => setArt33c2IncrementoDerogaRealizzabile(parseNumericValue(e.target.value))}
+                    placeholder="Inserisci importo in euro"
+                  />
                 </div>
               </div>
             </CardContent>
@@ -469,47 +302,31 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
         {risultatiCalcolo && (
           <div className="mt-8">
             <Card>
-              <CardHeader className="bg-green-600 text-white">
+              <CardHeader className="bg-purple-600 text-white">
                 <CardTitle>Risultati del Calcolo</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">Incremento Base (5%)</Label>
-                      <div className="text-xl font-bold text-green-600">
-                        {formatCurrency(risultatiCalcolo.incrementoBase)}
-                      </div>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">Incremento Disponibile</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-blue-50 rounded border-l-4 border-blue-600">
+                      <Label className="font-semibold text-blue-800">Somma Risorse Stabili</Label>
                       <div className="text-xl font-bold text-blue-600">
-                        {formatCurrency(risultatiCalcolo.incrementoDisponibile)}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">% Spese Personale / Entrate</Label>
-                      <div className={`text-xl font-bold ${risultatiCalcolo.rispettaLimiti ? 'text-green-600' : 'text-red-600'}`}>
-                        {formatPercentage(risultatiCalcolo.percentualeSpesePersonale)}
+                        {formatCurrency(risultatiCalcolo.sommaRisorseStabili)}
                       </div>
                     </div>
                     
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">Incremento Effettivo</Label>
-                      <div className="text-xl font-bold text-purple-600">
-                        {formatCurrency(risultatiCalcolo.incrementoEffettivo)}
+                    <div className="p-4 bg-green-50 rounded border-l-4 border-green-600">
+                      <Label className="font-semibold text-green-800">Somma Risorse Variabili</Label>
+                      <div className="text-xl font-bold text-green-600">
+                        {formatCurrency(risultatiCalcolo.sommaRisorseVariabili)}
                       </div>
                     </div>
-                  </div>
 
-                  <div className="p-6 bg-red-50 rounded-lg border-2 border-red-200">
-                    <Label className="font-semibold text-lg">Fondo Finale</Label>
-                    <div className="text-3xl font-bold text-red-600">
-                      {formatCurrency(risultatiCalcolo.fondoFinale)}
+                    <div className="p-4 bg-purple-50 rounded border-l-4 border-purple-600">
+                      <Label className="font-semibold text-purple-800">Totale Risorse Effettive</Label>
+                      <div className="text-xl font-bold text-purple-600">
+                        {formatCurrency(risultatiCalcolo.totaleRisorseEffettive)}
+                      </div>
                     </div>
                   </div>
                 </div>

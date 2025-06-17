@@ -11,6 +11,7 @@ import FondoSegretarioComunale from "./pages/FondoSegretarioComunale";
 import FondoDirigenza from "./pages/FondoDirigenza";
 import FondoPersonaleDipendente from "./pages/FondoPersonaleDipendente";
 import NuovoLimiteFondo from "./pages/NuovoLimiteFondo";
+import ReportCalcoli from "./pages/ReportCalcoli";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/fondo-dirigenza" element={<FondoDirigenza />} />
           <Route path="/fondo-personale-dipendente" element={<FondoPersonaleDipendente />} />
           <Route path="/nuovo-limite-fondo" element={<NuovoLimiteFondo />} />
+          <Route path="/report-calcoli" element={<ReportCalcoli />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

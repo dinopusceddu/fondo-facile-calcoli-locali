@@ -64,8 +64,8 @@ const FondoPersonaleDipendente = () => {
 
   // Calcolo automatico del totale parziale risorse
   useEffect(() => {
-    // Calcolo delle risorse stabili (tutte le voci positive meno quelle negative)
-    const risorseStabiliPositive = [
+    // Calcolo delle risorse stabili DA INCLUDERE (escludendo le 5 voci specificate)
+    const risorseStabiliDaIncludere = [
       parseFloat(unicoImportoFondo) || 0,
       parseFloat(alteProfessionalita) || 0,
       parseFloat(integrazioneRisorse) || 0,
@@ -74,17 +74,17 @@ const FondoPersonaleDipendente = () => {
       parseFloat(quotaMinori) || 0,
       parseFloat(riduzioneStabile) || 0,
       parseFloat(risorseStanziate) || 0
+      // ESCLUSE: incremento83, incrementiStipendiali, euro84Unita, differenzialiStipendiali2022, differenzialiB3D3
     ].reduce((sum, val) => sum + val, 0);
 
-    const risorseStabiliNegative = [
+    // Le 3 riduzioni del fondo da sottrarre
+    const riduzioniDelFondo = [
       parseFloat(tagliofondo) || 0,
       parseFloat(riduzioniATA) || 0,
       parseFloat(decurtazioneFondo) || 0
     ].reduce((sum, val) => sum + val, 0);
 
-    const risorseStabiliCalcolate = risorseStabiliPositive - risorseStabiliNegative;
-
-    // Calcolo delle risorse variabili soggette al limite
+    // Tutte le risorse variabili soggette al limite
     const risorseVariabiliSoggette = [
       parseFloat(risorseEvasione) || 0,
       parseFloat(integrazioneRisorseVariabili) || 0,
@@ -94,17 +94,8 @@ const FondoPersonaleDipendente = () => {
       parseFloat(risorseAdeguamento) || 0
     ].reduce((sum, val) => sum + val, 0);
 
-    // Le voci da detrarre secondo l'art. 23 comma 2 del d.lgs. n. 75/2017
-    const vocesDaDetrarre = [
-      parseFloat(incremento83) || 0,
-      parseFloat(incrementiStipendiali) || 0,
-      parseFloat(euro84Unita) || 0,
-      parseFloat(differenzialiStipendiali2022) || 0,
-      parseFloat(differenzialiB3D3) || 0
-    ].reduce((sum, val) => sum + val, 0);
-
-    // Calcolo del totale parziale
-    const totaleParzialeCalcolato = risorseStabiliCalcolate + risorseVariabiliSoggette - vocesDaDetrarre;
+    // Calcolo del totale parziale secondo art. 23 c. 2 d.lgs. 75/2017
+    const totaleParzialeCalcolato = risorseStabiliDaIncludere + risorseVariabiliSoggette - riduzioniDelFondo;
 
     setTotaleRisorse(totaleParzialeCalcolato.toFixed(2));
   }, [
@@ -124,12 +115,8 @@ const FondoPersonaleDipendente = () => {
     risorseCaseGioco,
     importoMassimo12,
     integrazioneArt62,
-    risorseAdeguamento,
-    incremento83,
-    incrementiStipendiali,
-    euro84Unita,
-    differenzialiStipendiali2022,
-    differenzialiB3D3
+    risorseAdeguamento
+    // NON incluse nel dependency array: incremento83, incrementiStipendiali, euro84Unita, differenzialiStipendiali2022, differenzialiB3D3
   ]);
 
   const handleSubmit = (e: React.FormEvent) => {

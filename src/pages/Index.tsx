@@ -99,6 +99,13 @@ const Index = () => {
             >
               Fondo Segretario Comunale
             </Button>
+            <Button
+              onClick={() => navigate('/fondo-dirigenza')}
+              variant="outline"
+              className="bg-white hover:bg-gray-50"
+            >
+              Fondo Dirigenza
+            </Button>
           </div>
         </div>
 

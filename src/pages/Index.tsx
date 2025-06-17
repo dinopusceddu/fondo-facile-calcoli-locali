@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, FileSpreadsheet, Users, TrendingUp } from "lucide-react";
+import { Calculator, FileSpreadsheet, Users, TrendingUp, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
@@ -9,7 +9,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8 bg-white shadow-lg max-w-4xl">
+      <div className="container mx-auto px-4 py-8 bg-white shadow-lg max-w-6xl">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mb-4">
@@ -26,7 +26,7 @@ const Index = () => {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/elevate-qualificazioni')}>
             <CardHeader className="bg-red-600 text-white">
               <CardTitle className="flex items-center gap-2">
@@ -60,6 +60,26 @@ const Index = () => {
             <CardContent className="p-6">
               <p className="text-gray-600 mb-4">
                 Simulazione incremento potenziale del fondo del salario accessorio basata su DL 25/2025, DM 17/03/2020, L. 296/06.
+              </p>
+              <Button className="w-full bg-red-600 hover:bg-red-700">
+                Accedi al Simulatore
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/fondo-personale-dipendente')}>
+            <CardHeader className="bg-red-600 text-white">
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Fondo Personale Dipendente
+              </CardTitle>
+              <CardDescription className="text-red-100">
+                Calcolo fondo per il personale dipendente
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <p className="text-gray-600 mb-4">
+                Simulazione per il calcolo del fondo del personale dipendente secondo la normativa contrattuale vigente.
               </p>
               <Button className="w-full bg-red-600 hover:bg-red-700">
                 Accedi al Simulatore

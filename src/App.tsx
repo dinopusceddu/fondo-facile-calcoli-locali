@@ -9,6 +9,7 @@ import ElevateQualificazioni from "./pages/ElevateQualificazioni";
 import IncrementoDLPA from "./pages/IncrementoDLPA";
 import FondoSegretarioComunale from "./pages/FondoSegretarioComunale";
 import FondoDirigenza from "./pages/FondoDirigenza";
+import FondoPersonaleDipendente from "./pages/FondoPersonaleDipendente";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/incremento-dl-pa" element={<IncrementoDLPA />} />
           <Route path="/fondo-segretario-comunale" element={<FondoSegretarioComunale />} />
           <Route path="/fondo-dirigenza" element={<FondoDirigenza />} />
+          <Route path="/fondo-personale-dipendente" element={<FondoPersonaleDipendente />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

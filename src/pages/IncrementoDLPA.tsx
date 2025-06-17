@@ -90,10 +90,29 @@ const IncrementoDLPA = () => {
         }
         
         const data = await response.json();
-        console.log("Dati caricati da GitHub con successo");
+        console.log("Dati caricati da GitHub con successo", data);
         
-        // Filtra solo i comuni della Lombardia
-        const comuniLombardia = data.filter((comune: any) => comune.regione === "Lombardia");
+        // Verifica la struttura dei dati e estrai l'array corretto
+        let comuniArray = [];
+        if (data.Foglio1 && Array.isArray(data.Foglio1)) {
+          comuniArray = data.Foglio1;
+        } else if (Array.isArray(data)) {
+          comuniArray = data;
+        } else {
+          throw new Error("Struttura dati non riconosciuta");
+        }
+        
+        // Filtra solo i comuni della Lombardia e normalizza i campi
+        const comuniLombardia = comuniArray
+          .filter((comune: any) => comune.regione === "Lombardia")
+          .map((comune: any) => ({
+            nome: comune.comune || comune.nome,
+            provincia: comune.provincia,
+            regione: comune.regione,
+            num_residenti: comune.num_residenti || 0
+          }));
+        
+        console.log("Comuni Lombardia trovati:", comuniLombardia.length);
         setComuni(comuniLombardia);
         setUsingFallbackData(false);
         

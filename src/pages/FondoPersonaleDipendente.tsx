@@ -1,6 +1,4 @@
-
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +61,76 @@ const FondoPersonaleDipendente = () => {
   const [misureVincoli, setMisureVincoli] = useState("");
 
   const [results, setResults] = useState<any>(null);
+
+  // Calcolo automatico del totale parziale risorse
+  useEffect(() => {
+    // Calcolo delle risorse stabili (tutte le voci positive meno quelle negative)
+    const risorseStabiliPositive = [
+      parseFloat(unicoImportoFondo) || 0,
+      parseFloat(alteProfessionalita) || 0,
+      parseFloat(integrazioneRisorse) || 0,
+      parseFloat(risorseRiassorbite) || 0,
+      parseFloat(sommeConnesse) || 0,
+      parseFloat(quotaMinori) || 0,
+      parseFloat(riduzioneStabile) || 0,
+      parseFloat(risorseStanziate) || 0
+    ].reduce((sum, val) => sum + val, 0);
+
+    const risorseStabiliNegative = [
+      parseFloat(tagliofondo) || 0,
+      parseFloat(riduzioniATA) || 0,
+      parseFloat(decurtazioneFondo) || 0
+    ].reduce((sum, val) => sum + val, 0);
+
+    const risorseStabiliCalcolate = risorseStabiliPositive - risorseStabiliNegative;
+
+    // Calcolo delle risorse variabili soggette al limite
+    const risorseVariabiliSoggette = [
+      parseFloat(risorseEvasione) || 0,
+      parseFloat(integrazioneRisorseVariabili) || 0,
+      parseFloat(risorseCaseGioco) || 0,
+      parseFloat(importoMassimo12) || 0,
+      parseFloat(integrazioneArt62) || 0,
+      parseFloat(risorseAdeguamento) || 0
+    ].reduce((sum, val) => sum + val, 0);
+
+    // Le voci da detrarre secondo l'art. 23 comma 2 del d.lgs. n. 75/2017
+    const vocesDaDetrarre = [
+      parseFloat(incremento83) || 0,
+      parseFloat(incrementiStipendiali) || 0,
+      parseFloat(euro84Unita) || 0,
+      parseFloat(differenzialiStipendiali2022) || 0,
+      parseFloat(differenzialiB3D3) || 0
+    ].reduce((sum, val) => sum + val, 0);
+
+    // Calcolo del totale parziale
+    const totaleParzialeCalcolato = risorseStabiliCalcolate + risorseVariabiliSoggette - vocesDaDetrarre;
+
+    setTotaleRisorse(totaleParzialeCalcolato.toFixed(2));
+  }, [
+    unicoImportoFondo,
+    alteProfessionalita,
+    integrazioneRisorse,
+    risorseRiassorbite,
+    sommeConnesse,
+    quotaMinori,
+    riduzioneStabile,
+    risorseStanziate,
+    tagliofondo,
+    riduzioniATA,
+    decurtazioneFondo,
+    risorseEvasione,
+    integrazioneRisorseVariabili,
+    risorseCaseGioco,
+    importoMassimo12,
+    integrazioneArt62,
+    risorseAdeguamento,
+    incremento83,
+    incrementiStipendiali,
+    euro84Unita,
+    differenzialiStipendiali2022,
+    differenzialiB3D3
+  ]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -492,12 +560,14 @@ const FondoPersonaleDipendente = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Totale parziale risorse disponibili per il fondo anno corrente
+                    <span className="block text-xs text-gray-500 mt-1">(Calcolato automaticamente secondo art. 23 c. 2 d.lgs. 75/2017)</span>
                   </label>
                   <Input
                     type="number"
                     step="0.01"
                     value={totaleRisorse}
-                    onChange={(e) => setTotaleRisorse(e.target.value)}
+                    readOnly
+                    className="bg-gray-100"
                     placeholder="€ 0,00"
                   />
                 </div>
@@ -813,4 +883,3 @@ const FondoPersonaleDipendente = () => {
 };
 
 export default FondoPersonaleDipendente;
-

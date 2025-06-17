@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,22 +34,18 @@ const IncrementoDLPA = () => {
   const [comune, setComune] = useState("");
   const [denominazioneEnte, setDenominazioneEnte] = useState("");
   const [numeroAbitanti, setNumeroAbitanti] = useState<number>(0);
+  const [numeroDipendenti, setNumeroDipendenti] = useState<number>(0);
   const [sogliaSpesaPersonale, setSogliaSpesaPersonale] = useState<number>(0);
 
-  // Dati per calcolo
-  const [fontoStorico2016, setFontoStorico2016] = useState<number>(0);
-  const [incrementoAnnuale, setIncrementoAnnuale] = useState<number>(0);
-  const [spesePersonale2023, setSpesePersonale2023] = useState<number>(0);
-  const [entrateCorrenti2023, setEntrateCorrenti2023] = useState<number>(0);
-
-  // Dati per limiti spesa personale
-  const [limiteSpesaPersonale, setLimiteSpesaPersonale] = useState<number>(0);
-  const [mediaSpesa20112013, setMediaSpesa20112013] = useState<number>(0);
-  
-  // Verifiche normative
-  const [rispettoLimiti, setRispettoLimiti] = useState("si");
-  const [equilibrioBilancio, setEquilibrioBilancio] = useState("si");
-  const [pattoDiStabilita, setPattoDiStabilita] = useState("si");
+  // Dati per calcolo - RIVISTI
+  const [stipendiTabellari2023, setStipendiTabellari2023] = useState<number>(0);
+  const [componenteStabileFondo, setComponenteStabileFondo] = useState<number>(0);
+  const [risorsePOEQ, setRisorsePOEQ] = useState<number>(0);
+  const [spesaPersonale2023, setSpesaPersonale2023] = useState<number>(0);
+  const [mediaEntrateCorrenti2021_2023, setMediaEntrateCorrenti2021_2023] = useState<number>(0);
+  const [tettoSpesaPersonale296_06, setTettoSpesaPersonale296_06] = useState<number>(0);
+  const [costoNuoveAssunzioni, setCostoNuoveAssunzioni] = useState<number>(0);
+  const [percentualeOneri, setPercentualeOneri] = useState<number>(33);
 
   // Risultati
   const [risultatiCalcolo, setRisultatiCalcolo] = useState<any>(null);
@@ -191,35 +186,56 @@ const IncrementoDLPA = () => {
   const procediConCalcolo = (event: React.FormEvent) => {
     event.preventDefault();
 
-    // FASE 1: Calcolo base incremento fondo
-    const incrementoBase = fontoStorico2016 * 0.05; // 5% del fondo storico 2016
+    // FASE 1: Incremento Potenziale Massimo (Regola del 48%)
+    const obiettivo48Percentuale = stipendiTabellari2023 * 0.48;
+    const fondoAttualeComplessivo = componenteStabileFondo + risorsePOEQ;
+    const incrementoPotenzialeLordo = Math.max(0, obiettivo48Percentuale - fondoAttualeComplessivo);
     
-    // FASE 2: Calcolo incremento disponibile
-    const incrementoDisponibile = incrementoBase + incrementoAnnuale;
+    // FASE 2: Verifica Limite di Spesa del Personale (DM 17/3/2020)
+    const spesaPersonaleAttuale = spesaPersonale2023 + costoNuoveAssunzioni;
+    const sogliaPercentuale = sogliaSpesaPersonale / 100; // Converti in decimale
+    const limiteSostenibileDL34 = mediaEntrateCorrenti2021_2023 * sogliaPercentuale;
+    const spazioDisponibileDL34 = Math.max(0, limiteSostenibileDL34 - spesaPersonaleAttuale);
     
-    // FASE 3: Verifica limiti spesa personale
-    const percentualeSpesePersonale = (spesePersonale2023 / entrateCorrenti2023) * 100;
-    const rispettaLimiti = percentualeSpesePersonale <= sogliaSpesaPersonale;
+    // FASE 3: Verifica Limite del Tetto Storico (L. 296/06)
+    const margineDisponibileC557 = Math.max(0, tettoSpesaPersonale296_06 - spesaPersonaleAttuale);
     
-    // FASE 4: Calcolo incremento effettivo
-    let incrementoEffettivo = 0;
-    if (rispettaLimiti && rispettoLimiti === "si" && equilibrioBilancio === "si" && pattoDiStabilita === "si") {
-      incrementoEffettivo = incrementoDisponibile;
-    } else {
-      incrementoEffettivo = incrementoDisponibile * 0.5; // Riduzione del 50% se non rispetta tutti i criteri
-    }
+    // FASE 4: Determinazione dello Spazio Utilizzabile Lordo
+    const spazioUtilizzabileLordo = Math.min(
+      incrementoPotenzialeLordo,
+      spazioDisponibileDL34,
+      margineDisponibileC557
+    );
     
-    // FASE 5: Calcolo fondo finale
-    const fondoFinale = fontoStorico2016 + incrementoEffettivo;
+    // FASE 5: Calcolo dell'Incremento Netto Effettivo del Fondo
+    const divisoreOneri = 1 + (percentualeOneri / 100);
+    const incrementoNettoEffettivo = spazioUtilizzabileLordo / divisoreOneri;
+
+    // Calcolo percentuale spese personale per controllo
+    const percentualeSpesePersonaleAttuale = (spesaPersonaleAttuale / mediaEntrateCorrenti2021_2023) * 100;
 
     const risultati = {
-      incrementoBase,
-      incrementoDisponibile,
-      percentualeSpesePersonale,
-      rispettaLimiti,
-      incrementoEffettivo,
-      fondoFinale,
-      risparmioPotenziale: incrementoEffettivo
+      // Fase 1
+      obiettivo48Percentuale,
+      fondoAttualeComplessivo,
+      incrementoPotenzialeLordo,
+      
+      // Fase 2
+      spesaPersonaleAttuale,
+      limiteSostenibileDL34,
+      spazioDisponibileDL34,
+      percentualeSpesePersonaleAttuale,
+      
+      // Fase 3
+      margineDisponibileC557,
+      
+      // Fase 4 e 5
+      spazioUtilizzabileLordo,
+      incrementoNettoEffettivo,
+      
+      // Dettagli vincoli
+      vincoloLimitante: spazioUtilizzabileLordo === incrementoPotenzialeLordo ? "Regola 48%" :
+                       spazioUtilizzabileLordo === spazioDisponibileDL34 ? "DM 17/3/2020" : "L. 296/06"
     };
 
     const dati = {
@@ -228,20 +244,18 @@ const IncrementoDLPA = () => {
         provincia,
         comune,
         abitanti: numeroAbitanti,
+        dipendenti: numeroDipendenti,
         sogliaSpesa: sogliaSpesaPersonale
       },
       calcoli: {
-        fontoStorico2016,
-        incrementoAnnuale,
-        spesePersonale2023,
-        entrateCorrenti2023,
-        limiteSpesaPersonale,
-        mediaSpesa20112013
-      },
-      verifiche: {
-        rispettoLimiti,
-        equilibrioBilancio,
-        pattoDiStabilita
+        stipendiTabellari2023,
+        componenteStabileFondo,
+        risorsePOEQ,
+        spesaPersonale2023,
+        mediaEntrateCorrenti2021_2023,
+        tettoSpesaPersonale296_06,
+        costoNuoveAssunzioni,
+        percentualeOneri
       },
       risultati
     };
@@ -263,16 +277,16 @@ const IncrementoDLPA = () => {
       `Denominazione Ente;${datiPerReport.ente.denominazione}`,
       `Provincia;${datiPerReport.ente.provincia}`,
       `Numero Abitanti;${datiPerReport.ente.abitanti}`,
-      `Fondo Storico 2016;${datiPerReport.calcoli.fontoStorico2016}`,
-      `Incremento Effettivo;${datiPerReport.risultati.incrementoEffettivo}`,
-      `Fondo Finale;${datiPerReport.risultati.fondoFinale}`
+      `Stipendi Tabellari 2023;${datiPerReport.calcoli.stipendiTabellari2023}`,
+      `Incremento Netto Effettivo;${datiPerReport.risultati.incrementoNettoEffettivo}`,
+      `Spazio Utilizzabile Lordo;${datiPerReport.risultati.spazioUtilizzabileLordo}`
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', 'elevate_qualificazioni_report.csv');
+    link.setAttribute('download', 'incremento_dlpa_report.csv');
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -282,17 +296,17 @@ const IncrementoDLPA = () => {
   const inviaEmail = () => {
     if (!datiPerReport) return;
     
-    const oggetto = encodeURIComponent("Simulazione Elevate Qualificazioni - " + datiPerReport.ente.denominazione);
+    const oggetto = encodeURIComponent("Simulazione Incremento DL PA - " + datiPerReport.ente.denominazione);
     const corpo = encodeURIComponent(`
-Simulazione Elevate Qualificazioni
+Simulazione Incremento Fondo DL PA
 
 Ente: ${datiPerReport.ente.denominazione}
 Provincia: ${datiPerReport.ente.provincia}
 Abitanti: ${datiPerReport.ente.abitanti}
 
-Fondo Storico 2016: ${formatCurrency(datiPerReport.calcoli.fontoStorico2016)}
-Incremento Effettivo: ${formatCurrency(datiPerReport.risultati.incrementoEffettivo)}
-Fondo Finale: ${formatCurrency(datiPerReport.risultati.fondoFinale)}
+Stipendi Tabellari 2023: ${formatCurrency(datiPerReport.calcoli.stipendiTabellari2023)}
+Incremento Netto Effettivo: ${formatCurrency(datiPerReport.risultati.incrementoNettoEffettivo)}
+Spazio Utilizzabile Lordo: ${formatCurrency(datiPerReport.risultati.spazioUtilizzabileLordo)}
 
 Generato il ${new Date().toLocaleDateString('it-IT')}
     `);
@@ -311,7 +325,7 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Simulazione Incremento Fondo Elevate Qualificazioni
+            Simulazione Incremento Fondo DL PA
           </h1>
           <p className="text-gray-600">
             Calcolo basato su DL 25/2025, DM 17/03/2020, L. 296/06
@@ -381,7 +395,7 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="denominazione">Denominazione dell'Ente</Label>
                   <Input
@@ -402,6 +416,17 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
                     className="bg-gray-100"
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dipendenti">N. dipendenti che attingeranno al fondo nel 2025</Label>
+                  <Input
+                    id="dipendenti"
+                    type="number"
+                    value={numeroDipendenti || ''}
+                    onChange={(e) => setNumeroDipendenti(parseNumericValue(e.target.value))}
+                    required
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -416,7 +441,7 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
             </CardContent>
           </Card>
 
-          {/* Dati per Calcolo */}
+          {/* Dati per Calcolo - COMPLETAMENTE RIVISTI */}
           <Card>
             <CardHeader className="bg-red-600 text-white">
               <CardTitle>Dati per Calcolo</CardTitle>
@@ -424,136 +449,104 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
             <CardContent className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fontoStorico">Fondo Storico 2016 (€)</Label>
+                  <Label htmlFor="stipendiTabellari">Stipendi tabellari del personale in servizio al 31/12/2023 (€)</Label>
                   <Input
-                    id="fontoStorico"
+                    id="stipendiTabellari"
                     type="number"
                     step="0.01"
-                    value={fontoStorico2016 || ''}
-                    onChange={(e) => setFontoStorico2016(parseNumericValue(e.target.value))}
+                    value={stipendiTabellari2023 || ''}
+                    onChange={(e) => setStipendiTabellari2023(parseNumericValue(e.target.value))}
                     required
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="incrementoAnnuale">Incremento Annuale (€)</Label>
+                  <Label htmlFor="componenteStabile">Componente stabile del Fondo ultimo approvato (€)</Label>
                   <Input
-                    id="incrementoAnnuale"
+                    id="componenteStabile"
                     type="number"
                     step="0.01"
-                    value={incrementoAnnuale || ''}
-                    onChange={(e) => setIncrementoAnnuale(parseNumericValue(e.target.value))}
+                    value={componenteStabileFondo || ''}
+                    onChange={(e) => setComponenteStabileFondo(parseNumericValue(e.target.value))}
+                    required
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="spesePersonale">Spese Personale 2023 (€)</Label>
+                  <Label htmlFor="risorsePOEQ">Risorse PO / Elevate Qualificazioni ultimo approvato (€)</Label>
                   <Input
-                    id="spesePersonale"
+                    id="risorsePOEQ"
                     type="number"
                     step="0.01"
-                    value={spesePersonale2023 || ''}
-                    onChange={(e) => setSpesePersonale2023(parseNumericValue(e.target.value))}
+                    value={risorsePOEQ || ''}
+                    onChange={(e) => setRisorsePOEQ(parseNumericValue(e.target.value))}
                     required
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="entrateCorrenti">Entrate Correnti 2023 (€)</Label>
+                  <Label htmlFor="spesaPersonale">Spesa di personale risultante dal consuntivo 2023 (€)</Label>
                   <Input
-                    id="entrateCorrenti"
+                    id="spesaPersonale"
                     type="number"
                     step="0.01"
-                    value={entrateCorrenti2023 || ''}
-                    onChange={(e) => setEntrateCorrenti2023(parseNumericValue(e.target.value))}
+                    value={spesaPersonale2023 || ''}
+                    onChange={(e) => setSpesaPersonale2023(parseNumericValue(e.target.value))}
                     required
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Dati per Limiti Spesa Personale */}
-          <Card>
-            <CardHeader className="bg-red-600 text-white">
-              <CardTitle>Dati per Limiti Spesa Personale</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="limiteSpesa">Limite Spesa Personale (€)</Label>
+                  <Label htmlFor="mediaEntrate">Media triennio 2021-2023 delle Entrate correnti (€)</Label>
                   <Input
-                    id="limiteSpesa"
+                    id="mediaEntrate"
                     type="number"
                     step="0.01"
-                    value={limiteSpesaPersonale || ''}
-                    onChange={(e) => setLimiteSpesaPersonale(parseNumericValue(e.target.value))}
+                    value={mediaEntrateCorrenti2021_2023 || ''}
+                    onChange={(e) => setMediaEntrateCorrenti2021_2023(parseNumericValue(e.target.value))}
+                    required
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="mediaSpesa">Media Spesa 2011-2013 (€)</Label>
+                  <Label htmlFor="tettoSpesa">Tetto di spesa personale L. 296/06 (media 2011-13) (€)</Label>
                   <Input
-                    id="mediaSpesa"
+                    id="tettoSpesa"
                     type="number"
                     step="0.01"
-                    value={mediaSpesa20112013 || ''}
-                    onChange={(e) => setMediaSpesa20112013(parseNumericValue(e.target.value))}
+                    value={tettoSpesaPersonale296_06 || ''}
+                    onChange={(e) => setTettoSpesaPersonale296_06(parseNumericValue(e.target.value))}
+                    required
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Verifiche Normative */}
-          <Card>
-            <CardHeader className="bg-red-600 text-white">
-              <CardTitle>Verifiche Normative</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-base font-medium">L'ente rispetta i limiti di spesa del personale?</Label>
-                  <RadioGroup value={rispettoLimiti} onValueChange={setRispettoLimiti} className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="si" id="limiti-si" />
-                      <Label htmlFor="limiti-si">Sì</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="limiti-no" />
-                      <Label htmlFor="limiti-no">No</Label>
-                    </div>
-                  </RadioGroup>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="costoAssunzioni">Costo annuo nuove assunzioni previste da PIAO (€)</Label>
+                  <Input
+                    id="costoAssunzioni"
+                    type="number"
+                    step="0.01"
+                    value={costoNuoveAssunzioni || ''}
+                    onChange={(e) => setCostoNuoveAssunzioni(parseNumericValue(e.target.value))}
+                  />
                 </div>
-
-                <div>
-                  <Label className="text-base font-medium">L'ente è in equilibrio di bilancio?</Label>
-                  <RadioGroup value={equilibrioBilancio} onValueChange={setEquilibrioBilancio} className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="si" id="equilibrio-si" />
-                      <Label htmlFor="equilibrio-si">Sì</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="equilibrio-no" />
-                      <Label htmlFor="equilibrio-no">No</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div>
-                  <Label className="text-base font-medium">L'ente rispetta il patto di stabilità?</Label>
-                  <RadioGroup value={pattoDiStabilita} onValueChange={setPattoDiStabilita} className="mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="si" id="patto-si" />
-                      <Label htmlFor="patto-si">Sì</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="no" id="patto-no" />
-                      <Label htmlFor="patto-no">No</Label>
-                    </div>
-                  </RadioGroup>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="percentualeOneri">Percentuale oneri (IRAP e contributi) (%)</Label>
+                  <Input
+                    id="percentualeOneri"
+                    type="number"
+                    step="0.01"
+                    value={percentualeOneri || ''}
+                    onChange={(e) => setPercentualeOneri(parseNumericValue(e.target.value))}
+                    required
+                  />
                 </div>
               </div>
             </CardContent>
@@ -561,7 +554,7 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
 
           <div className="text-center">
             <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg">
-              Calcola
+              Calcola Incremento
             </Button>
           </div>
         </form>
@@ -571,46 +564,99 @@ Generato il ${new Date().toLocaleDateString('it-IT')}
           <div className="mt-8">
             <Card>
               <CardHeader className="bg-green-600 text-white">
-                <CardTitle>Risultati del Calcolo</CardTitle>
+                <CardTitle>Risultati del Calcolo - Metodo 5 Fasi</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">Incremento Base (5%)</Label>
-                      <div className="text-xl font-bold text-green-600">
-                        {formatCurrency(risultatiCalcolo.incrementoBase)}
+                <div className="space-y-6">
+                  {/* Fase 1 */}
+                  <div className="border rounded-lg p-4 bg-blue-50">
+                    <h4 className="font-semibold text-lg mb-3">Fase 1: Incremento Potenziale Massimo (Regola 48%)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium">Obiettivo 48%</Label>
+                        <div className="text-lg font-bold text-blue-600">
+                          {formatCurrency(risultatiCalcolo.obiettivo48Percentuale)}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">Incremento Disponibile</Label>
-                      <div className="text-xl font-bold text-blue-600">
-                        {formatCurrency(risultatiCalcolo.incrementoDisponibile)}
+                      <div>
+                        <Label className="text-sm font-medium">Fondo Attuale Complessivo</Label>
+                        <div className="text-lg font-bold">
+                          {formatCurrency(risultatiCalcolo.fondoAttualeComplessivo)}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">% Spese Personale / Entrate</Label>
-                      <div className={`text-xl font-bold ${risultatiCalcolo.rispettaLimiti ? 'text-green-600' : 'text-red-600'}`}>
-                        {formatPercentage(risultatiCalcolo.percentualeSpesePersonale)}
-                      </div>
-                    </div>
-                    
-                    <div className="p-4 bg-gray-50 rounded">
-                      <Label className="font-semibold">Incremento Effettivo</Label>
-                      <div className="text-xl font-bold text-purple-600">
-                        {formatCurrency(risultatiCalcolo.incrementoEffettivo)}
+                      <div>
+                        <Label className="text-sm font-medium">Incremento Potenziale Lordo</Label>
+                        <div className="text-lg font-bold text-green-600">
+                          {formatCurrency(risultatiCalcolo.incrementoPotenzialeLordo)}
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 bg-red-50 rounded-lg border-2 border-red-200">
-                    <Label className="font-semibold text-lg">Fondo Finale</Label>
-                    <div className="text-3xl font-bold text-red-600">
-                      {formatCurrency(risultatiCalcolo.fondoFinale)}
+                  {/* Fase 2 */}
+                  <div className="border rounded-lg p-4 bg-yellow-50">
+                    <h4 className="font-semibold text-lg mb-3">Fase 2: Limite Spesa Personale (DM 17/3/2020)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium">Spesa Personale Attuale</Label>
+                        <div className="text-lg font-bold">
+                          {formatCurrency(risultatiCalcolo.spesaPersonaleAttuale)}
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium">Limite Sostenibile DL34</Label>
+                        <div className="text-lg font-bold">
+                          {formatCurrency(risultatiCalcolo.limiteSostenibileDL34)}
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium">Spazio Disponibile DL34</Label>
+                        <div className="text-lg font-bold text-orange-600">
+                          {formatCurrency(risultatiCalcolo.spazioDisponibileDL34)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <Label className="text-sm font-medium">% Spese Personale Attuale su Entrate</Label>
+                      <div className={`text-lg font-bold ${risultatiCalcolo.percentualeSpesePersonaleAttuale <= sogliaSpesaPersonale ? 'text-green-600' : 'text-red-600'}`}>
+                        {formatPercentage(risultatiCalcolo.percentualeSpesePersonaleAttuale)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fase 3 */}
+                  <div className="border rounded-lg p-4 bg-purple-50">
+                    <h4 className="font-semibold text-lg mb-3">Fase 3: Limite Tetto Storico (L. 296/06)</h4>
+                    <div>
+                      <Label className="text-sm font-medium">Margine Disponibile c.557</Label>
+                      <div className="text-lg font-bold text-purple-600">
+                        {formatCurrency(risultatiCalcolo.margineDisponibileC557)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fasi 4 e 5 */}
+                  <div className="border rounded-lg p-4 bg-green-50">
+                    <h4 className="font-semibold text-lg mb-3">Fasi 4-5: Spazio Utilizzabile e Incremento Netto</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium">Spazio Utilizzabile Lordo</Label>
+                        <div className="text-lg font-bold text-blue-600">
+                          {formatCurrency(risultatiCalcolo.spazioUtilizzabileLordo)}
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium">Vincolo Limitante</Label>
+                        <div className="text-lg font-bold text-red-600">
+                          {risultatiCalcolo.vincoloLimitante}
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium">Incremento Netto Effettivo</Label>
+                        <div className="text-2xl font-bold text-green-600">
+                          {formatCurrency(risultatiCalcolo.incrementoNettoEffettivo)}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

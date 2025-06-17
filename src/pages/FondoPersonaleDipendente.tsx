@@ -268,7 +268,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 79 c. 1 CCNL 2022. Art. 15 del CCNL 1999 c. 1 lett. l) Somme connesse al trattamento economico
+                    Art. 79 c. 1 CCNL 2022. Art. 15 del CCNL 1999 c. 1 lett. l) Risorse personale trasferito per delega di funzioni
                   </label>
                   <Input
                     type="number"
@@ -280,7 +280,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 79 c. 1 CCNL 2022. Art. 15 del CCNL 1999 c. 1 lett. i) Quota minori oneri dalla riduzione stabile
+                    Art. 79 c. 1 CCNL 2022. Art. 15 del CCNL 1999 c. 1 lett. i) Riduzione dirigenza delle Regioni
                   </label>
                   <Input
                     type="number"
@@ -352,7 +352,7 @@ const FondoPersonaleDipendente = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Art. 79 c. 1 lett. c) CCNL 2022 risorse stanziate dagli enti
+                    Art. 79 c. 1 lett. c) CCNL 2022 incremento per aumento dotazione organica
                   </label>
                   <Input
                     type="number"

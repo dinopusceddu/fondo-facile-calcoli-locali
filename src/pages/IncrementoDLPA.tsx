@@ -262,6 +262,15 @@ const IncrementoDLPA = () => {
 
     setRisultatiCalcolo(risultati);
     setDatiPerReport(dati);
+
+    // Salva i risultati nel localStorage per la pagina fondo-personale-dipendente
+    const resultData = {
+      incrementoNettoEffettivo: risultati.incrementoNettoEffettivo,
+      dataCalcolo: new Date().toISOString(),
+      enteCalcolo: denominazioneEnte
+    };
+    localStorage.setItem('incremento-dl-pa-results', JSON.stringify(resultData));
+    console.log("Risultati salvati nel localStorage:", resultData);
   };
 
   const generaReportPDF = () => {

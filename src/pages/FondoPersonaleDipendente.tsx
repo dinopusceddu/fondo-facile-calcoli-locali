@@ -2,12 +2,21 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, FileText, Download, Mail } from "lucide-react";
+import { ArrowLeft, FileText, Download, Mail, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const FondoPersonaleDipendente = () => {
   const navigate = useNavigate();
   const [risultatiVisible, setRisultatiVisible] = useState(false);
+  
+  // Nuovo stato per l'incremento decreto PA
+  const [incrementoDecretoPA, setIncrementoDecretoPA] = useState("");
+  
+  // Verifica se il modulo incremento DL PA è stato compilato
+  const datiIncrementoDLPA = localStorage.getItem('incremento-dl-pa-results');
+  const incrementoDisponibile = datiIncrementoDLPA ? JSON.parse(datiIncrementoDLPA).incrementoNettoEffettivo : 0;
+  const hasIncrementoDLPA = !!datiIncrementoDLPA;
   
   // Risorse Stabili
   const [unicoImportoFondo, setUnicoImportoFondo] = useState("");
@@ -58,10 +67,18 @@ const FondoPersonaleDipendente = () => {
 
   const [results, setResults] = useState<any>(null);
 
+  // Funzione per gestire il cambio del campo incremento decreto PA
+  const handleIncrementoDecretoPAChange = (value: string) => {
+    const numericValue = parseFloat(value) || 0;
+    if (numericValue <= incrementoDisponibile) {
+      setIncrementoDecretoPA(value);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Calcolo delle somme - Risorse Stabili da SOMMARE
+    // Calcolo delle somme - Risorse Stabili da SOMMARE (incluso incremento decreto PA)
     const risorseStabiliPositive = [
       parseFloat(unicoImportoFondo) || 0,
       parseFloat(alteProfessionalita) || 0,
@@ -75,7 +92,8 @@ const FondoPersonaleDipendente = () => {
       parseFloat(euro84Unita) || 0,
       parseFloat(risorseStanziate) || 0,
       parseFloat(differenzialiStipendiali2022) || 0,
-      parseFloat(differenzialiB3D3) || 0
+      parseFloat(differenzialiB3D3) || 0,
+      parseFloat(incrementoDecretoPA) || 0  // Aggiunto incremento decreto PA
     ].reduce((sum, val) => sum + val, 0);
 
     // Risorse Stabili da SOTTRARRE (riduzioni del fondo)
@@ -211,7 +229,38 @@ const FondoPersonaleDipendente = () => {
               <CardTitle>FONTI DI FINANZIAMENTO STABILI</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
+              {/* Alert per incremento decreto PA se disponibile */}
+              {hasIncrementoDLPA && (
+                <Alert className="mb-4">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    È disponibile un incremento dal Decreto PA di massimo € {incrementoDisponibile.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Campo Incremento Decreto PA - viene mostrato per primo se disponibile */}
+                {hasIncrementoDLPA && (
+                  <div className="md:col-span-2 border-2 border-green-300 bg-green-50 p-4 rounded">
+                    <label className="block text-sm font-medium mb-2 text-green-800">
+                      <strong>Incremento Decreto PA (DL 25/2025)</strong>
+                      <span className="block text-xs text-green-600 mt-1">
+                        Massimo disponibile: € {incrementoDisponibile.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                      </span>
+                    </label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={incrementoDecretoPA}
+                      onChange={(e) => handleIncrementoDecretoPAChange(e.target.value)}
+                      placeholder="€ 0,00"
+                      max={incrementoDisponibile}
+                      className="border-green-400 focus:border-green-600"
+                    />
+                  </div>
+                )}
+                
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 1 Unico importo del fondo del salario accessorio consolidato all'anno 2017

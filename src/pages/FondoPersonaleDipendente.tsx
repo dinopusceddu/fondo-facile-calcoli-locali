@@ -268,6 +268,7 @@ const FondoPersonaleDipendente = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 2 lett. a) Incremento di 83,20 per unità di personale
+                    <span className="block text-xs text-gray-500 mt-1">(da inserire se non già compreso nella prima voce)</span>
                   </label>
                   <Input
                     type="number"
@@ -280,6 +281,7 @@ const FondoPersonaleDipendente = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 2 lett. b) Incrementi stipendiali differenziali
+                    <span className="block text-xs text-gray-500 mt-1">(da inserire se non già compreso nella prima voce)</span>
                   </label>
                   <Input
                     type="number"
@@ -352,6 +354,7 @@ const FondoPersonaleDipendente = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Eventuale taglio del fondo storicizzato - Art. 9 comma 2 bis D.L. n.78/2010
+                    <span className="block text-xs text-gray-500 mt-1">(da inserire se non già compreso nella prima voce)</span>
                   </label>
                   <Input
                     type="number"
@@ -364,6 +367,7 @@ const FondoPersonaleDipendente = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Eventuali riduzioni del fondo per personale ATA, posizioni organizzative
+                    <span className="block text-xs text-gray-500 mt-1">(da inserire se non già compreso nella prima voce)</span>
                   </label>
                   <Input
                     type="number"
@@ -376,6 +380,7 @@ const FondoPersonaleDipendente = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Art. 67 c. 1 CCNL 21.05.2018 decurtazione fondo posizioni organizzative
+                    <span className="block text-xs text-gray-500 mt-1">(da inserire se non già compreso nella prima voce)</span>
                   </label>
                   <Input
                     type="number"

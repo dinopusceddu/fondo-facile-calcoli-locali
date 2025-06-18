@@ -240,27 +240,6 @@ const FondoPersonaleDipendente = () => {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Campo Incremento Decreto PA - viene mostrato per primo se disponibile */}
-                {hasIncrementoDLPA && (
-                  <div className="md:col-span-2 border-2 border-green-300 bg-green-50 p-4 rounded">
-                    <label className="block text-sm font-medium mb-2 text-green-800">
-                      <strong>Incremento Decreto PA (DL 25/2025)</strong>
-                      <span className="block text-xs text-green-600 mt-1">
-                        Massimo disponibile: € {incrementoDisponibile.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
-                      </span>
-                    </label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={incrementoDecretoPA}
-                      onChange={(e) => handleIncrementoDecretoPAChange(e.target.value)}
-                      placeholder="€ 0,00"
-                      max={incrementoDisponibile}
-                      className="border-green-400 focus:border-green-600"
-                    />
-                  </div>
-                )}
-                
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Art. 79 c. 1 CCNL 2022. Art. 67 del CCNL 2018 c. 1 Unico importo del fondo del salario accessorio consolidato all'anno 2017
@@ -454,6 +433,27 @@ const FondoPersonaleDipendente = () => {
                     placeholder="€ 0,00"
                   />
                 </div>
+                
+                {/* Campo Incremento Decreto PA spostato alla fine */}
+                {hasIncrementoDLPA && (
+                  <div className="md:col-span-2 border-2 border-green-300 bg-green-50 p-4 rounded">
+                    <label className="block text-sm font-medium mb-2 text-green-800">
+                      <strong>Incremento Decreto PA (DL 25/2025)</strong>
+                      <span className="block text-xs text-green-600 mt-1">
+                        Massimo disponibile: € {incrementoDisponibile.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                      </span>
+                    </label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={incrementoDecretoPA}
+                      onChange={(e) => handleIncrementoDecretoPAChange(e.target.value)}
+                      placeholder="€ 0,00"
+                      max={incrementoDisponibile}
+                      className="border-green-400 focus:border-green-600"
+                    />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
